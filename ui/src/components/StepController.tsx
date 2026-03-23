@@ -26,17 +26,15 @@ export default function StepController({
     if (!isPlaying) return;
 
     const interval = setInterval(() => {
-      onStepChange((prev) => {
-        if (prev >= maxSteps - 1) {
-          setIsPlaying(false);
-          return prev;
-        }
-        return prev + 1;
-      });
+      if (currentStep >= maxSteps - 1) {
+        setIsPlaying(false);
+        return;
+      }
+      onStepChange(currentStep + 1);
     }, speed);
 
     return () => clearInterval(interval);
-  }, [isPlaying, speed, maxSteps, onStepChange]);
+  }, [isPlaying, speed, maxSteps, currentStep, onStepChange]);
 
   const handlePlayPause = () => {
     if (currentStep >= maxSteps - 1) {

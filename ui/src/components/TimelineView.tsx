@@ -1,4 +1,4 @@
-import { ProgramAnalysis, Event } from "../types";
+import { ProgramAnalysis } from "../types";
 import {
   Sparkles,
   Package,
@@ -90,8 +90,8 @@ export default function TimelineView({
                 isActive
                   ? `${getEventColor(event.kind)} scale-105 shadow-lg`
                   : isPast
-                  ? "border-gray-700 bg-gray-800/50 opacity-60"
-                  : "border-gray-700 bg-gray-800/30 opacity-40"
+                    ? "border-gray-700 bg-gray-800/50 opacity-60"
+                    : "border-gray-700 bg-gray-800/30 opacity-40"
               }`}
             >
               <div className="flex items-start gap-3">
@@ -106,7 +106,9 @@ export default function TimelineView({
                     </span>
                   </div>
                   <div className="font-medium mb-1">
-                    <code className="text-blue-300">{variable?.name || "?"}</code>
+                    <code className="text-blue-300">
+                      {variable?.name || "?"}
+                    </code>
                   </div>
                   <p className="text-sm text-gray-300">{event.explanation}</p>
                   {event.related_variable_id && (
