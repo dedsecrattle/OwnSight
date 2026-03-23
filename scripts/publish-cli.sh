@@ -15,19 +15,31 @@ fi
 # Publish in order (dependencies first)
 echo "1/3 Publishing ownsight-core..."
 cd crates/ownsight-core
-cargo publish
-echo "⏳ Waiting for crates.io to index..."
-sleep 30
+if cargo publish --dry-run 2>/dev/null; then
+    cargo publish
+    echo "⏳ Waiting for crates.io to index..."
+    sleep 30
+else
+    echo "✅ ownsight-core already published, skipping..."
+fi
 
 echo "2/3 Publishing ownsight-driver..."
 cd ../ownsight-driver
-cargo publish
-echo "⏳ Waiting for crates.io to index..."
-sleep 30
+if cargo publish --dry-run 2>/dev/null; then
+    cargo publish
+    echo "⏳ Waiting for crates.io to index..."
+    sleep 30
+else
+    echo "✅ ownsight-driver already published, skipping..."
+fi
 
 echo "3/3 Publishing ownsight-cli..."
 cd ../ownsight-cli
-cargo publish
+if cargo publish --dry-run 2>/dev/null; then
+    cargo publish
+else
+    echo "✅ ownsight-cli already published, skipping..."
+fi
 
 cd ../..
 

@@ -14,7 +14,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Ownsight Contributors"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/yourusername/ownsight"
+repository = "https://github.com/dedsecrattle/ownsight"
 
 [workspace.dependencies]
 serde = { version = "1.0", features = ["derive"] }

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Rust Ownership Visualizer Desktop App"
 authors = ["Ownsight Contributors"]
 license = "MIT OR Apache-2.0"
-repository = ""
+repository = "https://github.com/dedsecrattle/ownsight"
 edition = "2021"
 
 [build-dependencies]

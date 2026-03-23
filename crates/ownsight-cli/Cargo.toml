@@ -5,8 +5,8 @@ edition = "2021"
 description = "CLI tool for visualizing Rust ownership and borrowing"
 authors = ["Ownsight Contributors"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/yourusername/ownsight"
-homepage = "https://github.com/yourusername/ownsight"
+repository = "https://github.com/dedsecrattle/ownsight"
+homepage = "https://github.com/dedsecrattle/ownsight"
 documentation = "https://docs.rs/ownsight-cli"
 keywords = ["rust", "ownership", "borrow-checker", "visualization", "cli"]
 categories = ["development-tools", "visualization", "command-line-utilities"]
@@ -17,8 +17,8 @@ name = "cargo-ownership-viz"
 path = "src/main.rs"
 
 [dependencies]
-ownsight-core = { path = "../ownsight-core" }
-ownsight-driver = { path = "../ownsight-driver" }
+ownsight-core = { version = "0.1.0", path = "../ownsight-core" }
+ownsight-driver = { version = "0.1.0", path = "../ownsight-driver" }
 anyhow.workspace = true
 serde_json.workspace = true
 clap = { version = "4.4", features = ["derive"] }

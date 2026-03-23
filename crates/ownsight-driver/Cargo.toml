@@ -5,15 +5,15 @@ edition = "2021"
 description = "Rust compiler integration and analysis driver for Ownsight"
 authors = ["Ownsight Contributors"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/yourusername/ownsight"
-homepage = "https://github.com/yourusername/ownsight"
+repository = "https://github.com/dedsecrattle/ownsight"
+homepage = "https://github.com/dedsecrattle/ownsight"
 documentation = "https://docs.rs/ownsight-driver"
 keywords = ["rust", "ownership", "compiler", "analysis", "parser"]
 categories = ["development-tools", "parser-implementations"]
 readme = "../../README.md"
 
 [dependencies]
-ownsight-core = { path = "../ownsight-core" }
+ownsight-core = { version = "0.1.0", path = "../ownsight-core" }
 anyhow.workspace = true
 serde.workspace = true
 serde_json.workspace = true
