@@ -1,6 +1,6 @@
 use anyhow::{Result, Context};
 use ownsight_core::AnalysisMode;
-use ownsight_driver::SimpleAnalyzer;
+use ownsight_driver::{AnalyzerBackend, create_analyzer};
 use std::fs;
 use std::io::{self, Read};
 
@@ -9,6 +9,7 @@ pub fn run(
     stdin: bool,
     output: Option<String>,
     mode: Option<String>,
+    backend: Option<String>,
     _function: Option<String>,
 ) -> Result<()> {
     let (source, filename) = if stdin {
@@ -29,7 +30,16 @@ pub fn run(
         _ => AnalysisMode::Teaching,
     };
     
-    let mut analyzer = SimpleAnalyzer::new(analysis_mode);
+    let analyzer_backend = match backend.as_deref() {
+        Some("mir") => AnalyzerBackend::Mir,
+        Some("simple") => AnalyzerBackend::Simple,
+        None => AnalyzerBackend::default(),
+        Some(other) => {
+            anyhow::bail!("Unknown backend: {}. Valid options: simple, mir", other);
+        }
+    };
+    
+    let mut analyzer = create_analyzer(analyzer_backend, analysis_mode);
     let analysis = analyzer.analyze(&source, &filename)?;
     
     let output_format = output.as_deref().unwrap_or("timeline");

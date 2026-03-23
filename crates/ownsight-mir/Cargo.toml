@@ -1,0 +1,21 @@
+[package]
+name = "ownsight-mir"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "MIR-based ownership analysis using rustc internals"
+keywords = ["rust", "mir", "ownership", "compiler", "analysis"]
+categories = ["development-tools"]
+
+[dependencies]
+ownsight-core = { version = "0.1.0", path = "../ownsight-core" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[features]
+default = []
+# Note: rustc feature requires building with nightly and having rustc-dev component installed
+# The rustc crates are provided by the toolchain, not crates.io

@@ -9,6 +9,7 @@ A dynamic, interactive tool for visualizing Rust ownership, borrowing, and lifet
 ## 🚀 Quick Start
 
 ### CLI Tool
+
 ```bash
 # Install from crates.io
 cargo install ownsight-cli
@@ -21,36 +22,51 @@ echo 'fn main() { let s = String::from("hello"); }' | cargo ownership-viz --stdi
 ```
 
 ### Desktop App
+
 Download the latest release for your platform:
+
 - **macOS**: [Download .dmg](https://github.com/dedsecrattle/ownsight/releases/latest)
 - **Linux**: [Download .AppImage](https://github.com/dedsecrattle/ownsight/releases/latest)
 - **Windows**: [Download .msi](https://github.com/dedsecrattle/ownsight/releases/latest)
 
 ## ✨ Features
 
-### Layer 1 - Learning & Exam Tool
+### Layer 1 - Learning & Exam Tool (Stable)
+
 - 🎯 **Interactive Timeline View**: Step through ownership events line by line
 - 📊 **Visual Source Highlighting**: See ownership changes directly in your code
 - 💡 **Teaching Mode**: Simplified explanations optimized for learning
 - ⏯️ **Step Controller**: Play, pause, and navigate through ownership events
 - 📝 **Event Explanations**: Human-readable descriptions of what happens to each variable
+- ⚡ **Fast Analysis**: Syntax-based, no compilation required
 
-### Layer 2 - Debugging & Intelligence (Coming Soon)
-- 🔍 **Query Interface**: Ask "Why can't I use X here?", "Where was X moved?", "What is borrowing Y?"
-- 📈 **Ownership Graph**: Visualize relationships between variables, references, and scopes
-- 🐛 **Debug Mode**: Precise, compiler-backed analysis
-- 🎨 **Graph Visualization**: Interactive graph showing ownership relationships
+### Layer 2 - MIR-Based Analysis (Beta)
+
+- � **Compiler-Backed Analysis**: Uses Rust's MIR for accurate ownership tracking
+- 🧬 **Partial Move Detection**: Track field-level moves in structs
+- � **Closure Capture Analysis**: Detect how closures capture variables (ByValue, ByRef, ByMutRef)
+- ⏳ **Async/Await Support**: Identify suspension points and Send/Sync requirements
+- 🎯 **NLL Support**: Non-lexical lifetime analysis foundation
+- 📊 **Function Summaries**: Cross-function ownership analysis
+- 🔍 **Query Interface**: Ask "Why can't I use X here?", "Where was X moved?"
+- 🐛 **Debug Mode**: Precise, type-aware analysis
 
 ## Architecture
 
 ```
 ownsight/
 ├── crates/
-│   ├── ownsight-core/      # Core analysis engine (data model, events, graphs)
-│   ├── ownsight-driver/    # Rust compiler integration (MIR-based analysis)
+│   ├── ownsight-core/      # Core data model (variables, events, graphs)
+│   ├── ownsight-mir/       # MIR-based analyzer (Layer 2, rustc internals)
+│   ├── ownsight-driver/    # Analysis driver (backend selection)
 │   └── ownsight-cli/       # Command-line interface (cargo ownership-viz)
 └── ui/                     # Tauri desktop app (React + TypeScript)
 ```
+
+**Two Analysis Backends:**
+
+- **Simple (Layer 1)**: Fast syntax-based analysis, no compilation needed
+- **MIR (Layer 2)**: Accurate compiler-based analysis using rustc internals
 
 ## 📦 Installation
 
@@ -71,11 +87,13 @@ Visit the [releases page](https://github.com/dedsecrattle/ownsight/releases) and
 ### Option 3: Build from Source
 
 **Prerequisites:**
+
 - Rust (stable toolchain)
 - Bun (for UI development)
 - Platform-specific dependencies (see below)
 
 **Clone and build:**
+
 ```bash
 git clone https://github.com/dedsecrattle/ownsight.git
 cd ownsight
@@ -95,6 +113,7 @@ bun run tauri build
 **Platform-specific dependencies:**
 
 - **Ubuntu/Debian:**
+
   ```bash
   sudo apt-get install libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
   ```
@@ -107,17 +126,27 @@ bun run tauri build
 
 ### CLI Tool
 
-**Analyze a Rust file:**
+**Basic analysis (Simple backend - default):**
+
 ```bash
 cargo ownership-viz --file example.rs
 ```
 
+**MIR-based analysis (Layer 2):**
+
+```bash
+# Requires nightly Rust + rustc-dev component
+cargo ownership-viz --file example.rs --backend mir
+```
+
 **Analyze from stdin:**
+
 ```bash
 echo 'fn main() { let s = String::from("hello"); }' | cargo ownership-viz --stdin
 ```
 
 **Output formats:**
+
 ```bash
 # Timeline format (default)
 cargo ownership-viz --file example.rs
@@ -127,12 +156,23 @@ cargo ownership-viz --file example.rs --output json
 ```
 
 **Teaching vs Debug mode:**
+
 ```bash
 # Teaching mode: simplified explanations for learning
 cargo ownership-viz --file example.rs --mode teaching
 
 # Debug mode: precise, technical analysis
 cargo ownership-viz --file example.rs --mode debug
+```
+
+**Backend selection:**
+
+```bash
+# Simple backend (fast, syntax-based)
+cargo ownership-viz --file example.rs --backend simple
+
+# MIR backend (accurate, compiler-based)
+cargo ownership-viz --file example.rs --backend mir
 ```
 
 ### Desktop App
@@ -146,6 +186,7 @@ Launch the installed application, then:
 5. **Try the query panel** to ask questions about ownership
 
 **Features:**
+
 - 📝 **Monaco Code Editor**: Syntax highlighting and editing
 - ⏯️ **Step Controller**: Play/pause with adjustable speed
 - 📊 **Timeline View**: Event-by-event breakdown with icons
@@ -153,10 +194,12 @@ Launch the installed application, then:
 - 🔍 **Query Panel**: Interactive debugging questions
 
 **Development mode:**
+
 ```bash
 cd ui
 bun run tauri dev
 ```
+
 - **Interactive Stepping**: Play/pause through events with speed control
 
 ## Example
@@ -172,6 +215,7 @@ fn main() {
 ```
 
 Ownsight will show:
+
 1. Line 2: `s` created and owns the String
 2. Line 3: `r1` borrows `s` immutably
 3. Line 4: `r1` is used (borrow is valid)
@@ -181,6 +225,7 @@ Ownsight will show:
 ## Data Model
 
 The core analysis produces:
+
 - **Variables**: Name, type, scope, mutability
 - **Events**: Create, Move, Borrow, Drop, etc.
 - **Ownership Graph**: Nodes (variables, references) and edges (owns, borrows, moves)
@@ -190,17 +235,20 @@ The core analysis produces:
 ## Development
 
 ### Running Tests
+
 ```bash
 cargo test --workspace
 ```
 
 ### Snapshot Tests
+
 ```bash
 cargo insta test
 cargo insta review
 ```
 
 ### Development Workflow
+
 ```bash
 # Terminal 1: Watch Rust changes
 cargo watch -x "build --workspace"
@@ -211,7 +259,8 @@ cd ui && bun run tauri dev
 
 ## 🗺️ Roadmap
 
-### ✅ v0.1.0 (Current - Layer 1 MVP)
+### ✅ v0.1.0 (Released - Layer 1)
+
 - [x] Core data model (variables, events, graphs)
 - [x] Simple syntax-based analysis
 - [x] CLI tool with multiple output formats
@@ -224,17 +273,30 @@ cd ui && bun run tauri dev
 - [x] Graph visualization with React Flow
 - [x] Query interface for debugging questions
 
+### ✅ v0.2.0 (Current - Layer 2 Foundation)
+
+- [x] MIR-based analysis using rustc internals
+- [x] Backend selection (Simple vs MIR)
+- [x] Partial move detection (struct fields)
+- [x] Closure capture analysis (ByValue, ByRef, ByMutRef)
+- [x] Async/await support (suspension points, Send/Sync)
+- [x] NLL foundation (lifetime regions)
+- [x] Function summary framework
+- [x] Extended event types (PartialMove, ClosureCapture, AwaitSuspend, etc.)
+- [x] Comprehensive test suite
+
 ### Next (Layer 2 Enhancements)
-- [ ] MIR-based analysis using rustc internals
+
+- [ ] Full Polonius integration for NLL
 - [ ] Cargo workspace support
-- [ ] Function summaries
-- [ ] Partial moves (struct fields)
-- [ ] Pattern matching flows
-- [ ] Non-lexical lifetimes (NLL)
-- [ ] Closure capture analysis
-- [ ] Async/await support
+- [ ] Cross-crate analysis
+- [ ] Pattern matching flow analysis
+- [ ] Complete function summaries
+- [ ] Performance optimization
+- [ ] Incremental analysis
 
 ### Future
+
 - [ ] VS Code extension
 - [ ] Rust Analyzer integration
 - [ ] Web-based version (WASM)
@@ -248,6 +310,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 ## License
 
 Licensed under either of:
+
 - Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
 - MIT license ([LICENSE-MIT](LICENSE-MIT))
 
@@ -256,6 +319,7 @@ at your option.
 ## 🙏 Acknowledgments
 
 Built with:
+
 - [Rust](https://www.rust-lang.org/) - Systems programming language
 - [Tauri](https://tauri.app/) - Cross-platform desktop framework
 - [React Flow](https://reactflow.dev/) - Interactive graph visualization

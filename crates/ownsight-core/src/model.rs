@@ -44,6 +44,7 @@ pub struct Variable {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventKind {
+    // Layer 1 events
     Create,
     MoveOut,
     MoveIn,
@@ -56,6 +57,17 @@ pub enum EventKind {
     StorageDead,
     Reinit,
     Conflict,
+    
+    // Layer 2 events
+    PartialMove,
+    ClosureCapture,
+    AwaitSuspend,
+    AwaitResume,
+    TwoPhaseActivate,
+    ReborrowShared,
+    ReborrowMut,
+    FieldAccess,
+    MethodCall,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -318,4 +330,67 @@ pub struct BorrowInfo {
     pub borrowed_var: VariableId,
     pub borrow_var: Option<VariableId>,
     pub is_mutable: bool,
+}
+
+// ============================================================================
+// Layer 2 Data Structures
+// ============================================================================
+
+/// MIR location (basic block + statement index)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct MirLocation {
+    pub basic_block: usize,
+    pub statement_index: usize,
+}
+
+/// Lifetime identifier
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct LifetimeId(pub usize);
+
+/// Lifetime region information
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Lifetime {
+    pub id: LifetimeId,
+    pub name: Option<String>,
+    pub region: Region,
+}
+
+/// Region bounds (start and end locations)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Region {
+    pub start: MirLocation,
+    pub end: MirLocation,
+}
+
+/// Closure capture mode
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum CaptureMode {
+    ByValue,
+    ByRef,
+    ByMutRef,
+}
+
+/// Closure capture information
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ClosureCapture {
+    pub var_id: VariableId,
+    pub capture_mode: CaptureMode,
+    pub by_ref: bool,
+}
+
+/// Async context information
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AsyncContext {
+    pub is_async: bool,
+    pub await_points: Vec<usize>,
+    pub send_required: bool,
+    pub sync_required: bool,
+}
+
+/// Partial move information
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PartialMoveInfo {
+    pub base_var: VariableId,
+    pub field_path: Vec<String>,
+    pub moved_fields: Vec<String>,
 }

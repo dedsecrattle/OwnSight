@@ -14,9 +14,14 @@ readme = "../../README.md"
 
 [dependencies]
 ownsight-core = { version = "0.1.0", path = "../ownsight-core" }
+ownsight-mir = { version = "0.1.0", path = "../ownsight-mir", optional = true }
 anyhow.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+
+[features]
+default = []
+mir = ["ownsight-mir"]
 
 [dev-dependencies]
 insta = "1.34"

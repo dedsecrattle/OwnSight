@@ -1,6 +1,7 @@
 use ownsight_core::*;
 use anyhow::Result;
 use std::collections::HashMap;
+use crate::OwnershipAnalyzer;
 
 pub struct SimpleAnalyzer {
     mode: AnalysisMode,
@@ -250,4 +251,10 @@ struct VarInfo {
 struct FunctionCall {
     name: String,
     args: Vec<String>,
+}
+
+impl OwnershipAnalyzer for SimpleAnalyzer {
+    fn analyze(&mut self, source: &str, filename: &str) -> Result<ProgramAnalysis> {
+        self.analyze(source, filename)
+    }
 }

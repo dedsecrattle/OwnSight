@@ -40,6 +40,15 @@ impl EventBuilder {
             EventKind::StorageDead => format!("Storage deallocated"),
             EventKind::Reinit => format!("Variable reinitialized"),
             EventKind::Conflict => format!("Borrow conflict detected"),
+            EventKind::PartialMove => format!("Partial move of struct field"),
+            EventKind::ClosureCapture => format!("Variable captured by closure"),
+            EventKind::AwaitSuspend => format!("Async function suspended at await point"),
+            EventKind::AwaitResume => format!("Async function resumed after await"),
+            EventKind::TwoPhaseActivate => format!("Two-phase borrow activated"),
+            EventKind::ReborrowShared => format!("Immutable reborrow"),
+            EventKind::ReborrowMut => format!("Mutable reborrow"),
+            EventKind::FieldAccess => format!("Field accessed"),
+            EventKind::MethodCall => format!("Method called"),
         }
     }
     
@@ -110,6 +119,33 @@ impl EventBuilder {
                     "Borrow conflict: cannot borrow `{}` because it is already borrowed",
                     var_name
                 )
+            }
+            EventKind::PartialMove => {
+                format!("Field of `{}` is partially moved. The struct is now partially moved", var_name)
+            }
+            EventKind::ClosureCapture => {
+                format!("`{}` is captured by a closure", var_name)
+            }
+            EventKind::AwaitSuspend => {
+                format!("Async function suspended at await point. `{}` must remain valid across suspension", var_name)
+            }
+            EventKind::AwaitResume => {
+                format!("Async function resumed. `{}` is accessible again", var_name)
+            }
+            EventKind::TwoPhaseActivate => {
+                format!("Two-phase borrow of `{}` is activated", var_name)
+            }
+            EventKind::ReborrowShared => {
+                format!("Immutable reference to `{}` is reborrowed", var_name)
+            }
+            EventKind::ReborrowMut => {
+                format!("Mutable reference to `{}` is reborrowed", var_name)
+            }
+            EventKind::FieldAccess => {
+                format!("Field of `{}` is accessed", var_name)
+            }
+            EventKind::MethodCall => {
+                format!("Method called on `{}`", var_name)
             }
         }
     }
