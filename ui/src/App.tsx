@@ -13,7 +13,10 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0);
   const [code, setCode] = useState(EXAMPLE_CODE);
   const [mode, setMode] = useState<"teaching" | "debug">("teaching");
-  const [activeView, setActiveView] = useState<"timeline" | "graph">("timeline");
+  const [backend, setBackend] = useState<"simple" | "mir">("simple");
+  const [activeView, setActiveView] = useState<"timeline" | "graph">(
+    "timeline",
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,6 +29,7 @@ function App() {
           code,
           filename: "snippet.rs",
           mode,
+          backend,
         },
       });
       setAnalysis(result);
@@ -47,9 +51,25 @@ function App() {
           <div className="flex items-center gap-3">
             <FileCode className="w-8 h-8 text-blue-500" />
             <h1 className="text-2xl font-bold">Ownsight</h1>
-            <span className="text-sm text-gray-400">Rust Ownership Visualizer</span>
+            <span className="text-sm text-gray-400">
+              Rust Ownership Visualizer
+            </span>
+            {backend === "mir" && (
+              <span className="ml-2 px-2 py-1 text-xs bg-purple-600 text-white rounded-full">
+                Layer 2
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4">
+            <select
+              value={backend}
+              onChange={(e) => setBackend(e.target.value as "simple" | "mir")}
+              className="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm"
+              title="Analysis backend: Simple (fast, syntax-based) or MIR (accurate, compiler-based)"
+            >
+              <option value="simple">Simple Backend</option>
+              <option value="mir">MIR Backend (Layer 2)</option>
+            </select>
             <select
               value={mode}
               onChange={(e) => setMode(e.target.value as "teaching" | "debug")}
@@ -127,7 +147,9 @@ function App() {
               <div className="flex items-center justify-center h-full text-gray-500">
                 <div className="text-center">
                   <FileCode className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p>Enter Rust code and click "Analyze" to visualize ownership</p>
+                  <p>
+                    Enter Rust code and click "Analyze" to visualize ownership
+                  </p>
                 </div>
               </div>
             )}
