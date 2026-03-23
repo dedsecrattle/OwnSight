@@ -21,6 +21,11 @@ impl MirAnalyzer {
             driver: None,
         }
     }
+    
+    /// Get the analysis mode
+    pub fn mode(&self) -> &AnalysisMode {
+        &self.mode
+    }
 
     #[cfg(feature = "rustc")]
     pub fn analyze(&mut self, source: &str, filename: &str) -> Result<ProgramAnalysis> {

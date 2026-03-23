@@ -17,5 +17,4 @@ serde_json.workspace = true
 
 [features]
 default = []
-# Note: rustc feature requires building with nightly and having rustc-dev component installed
-# The rustc crates are provided by the toolchain, not crates.io
+rustc = []  # Enable rustc internals support (requires nightly + rustc-dev component)
