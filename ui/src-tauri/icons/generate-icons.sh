@@ -3,14 +3,15 @@
 
 set -e
 
-# Create a simple SVG icon
+# Create a simple SVG icon (without text to avoid font issues)
 cat > icon.svg << 'EOF'
 <svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
   <rect width="512" height="512" fill="#1e293b"/>
   <circle cx="256" cy="256" r="200" fill="#3b82f6" opacity="0.2"/>
   <circle cx="256" cy="256" r="150" fill="#3b82f6" opacity="0.3"/>
   <circle cx="256" cy="256" r="100" fill="#3b82f6" opacity="0.5"/>
-  <text x="256" y="280" font-family="Arial, sans-serif" font-size="200" font-weight="bold" fill="#60a5fa" text-anchor="middle">O</text>
+  <circle cx="256" cy="256" r="80" fill="#60a5fa" opacity="0.8"/>
+  <circle cx="256" cy="256" r="50" fill="#1e293b" opacity="1.0"/>
 </svg>
 EOF
 
