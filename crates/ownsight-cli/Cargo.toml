@@ -1,0 +1,18 @@
+[package]
+name = "ownsight-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "cargo-ownership-viz"
+path = "src/main.rs"
+
+[dependencies]
+ownsight-core = { path = "../ownsight-core" }
+ownsight-driver = { path = "../ownsight-driver" }
+anyhow.workspace = true
+serde_json.workspace = true
+clap = { version = "4.4", features = ["derive"] }
+colored = "2.1"

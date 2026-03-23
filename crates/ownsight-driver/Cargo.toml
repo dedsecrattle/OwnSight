@@ -1,0 +1,15 @@
+[package]
+name = "ownsight-driver"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+ownsight-core = { path = "../ownsight-core" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+insta = "1.34"

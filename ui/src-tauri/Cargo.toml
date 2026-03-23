@@ -1,0 +1,23 @@
+[package]
+name = "ownsight-ui"
+version = "0.1.0"
+description = "Rust Ownership Visualizer Desktop App"
+authors = ["Ownsight Contributors"]
+license = "MIT OR Apache-2.0"
+repository = ""
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+ownsight-core = { path = "../../crates/ownsight-core" }
+ownsight-driver = { path = "../../crates/ownsight-driver" }
+serde_json.workspace = true
+serde = { workspace = true, features = ["derive"] }
+tauri = { version = "1.5", features = ["shell-open"] }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+[workspace]

@@ -1,0 +1,6 @@
+fn main() {
+    let s = String::from("hello");
+    let r1 = &s;
+    let r2 = &s;
+    println!("{} and {}", r1, r2);
+}
