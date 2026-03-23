@@ -1,33 +1,26 @@
-name: Release
+name: Release Desktop App
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  create-release:
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: false
-
-  build-tauri:
-    needs: create-release
+  build-desktop:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
+        include:
+          - platform: 'macos-latest'
+            args: '--target universal-apple-darwin'
+          - platform: 'ubuntu-22.04'
+            args: ''
+          - platform: 'windows-latest'
+            args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -35,26 +28,32 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-20.04'
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
-      - name: Rust setup
+      - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './ui/src-tauri -> target'
 
-      - name: Install Bun
+      - name: Setup Bun
         uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
 
       - name: Install frontend dependencies
-        run: cd ui && bun install
+        run: |
+          cd ui
+          bun install
 
-      - name: Build the app
+      - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -62,6 +61,38 @@ jobs:
           projectPath: ui
           tagName: ${{ github.ref_name }}
           releaseName: 'Ownsight v__VERSION__'
-          releaseBody: 'See the assets to download and install.'
+          releaseBody: |
+            ## Ownsight v__VERSION__ - Rust Ownership Visualizer
+            
+            ### 🎉 What's New
+            Interactive visualization tool for understanding Rust ownership and borrowing.
+            
+            ### 📦 Installation
+            
+            **CLI Tool:**
+            ```bash
+            cargo install ownsight-cli
+            ```
+            
+            **Desktop App:**
+            - **macOS**: Download the `.dmg` file below
+            - **Linux**: Download the `.AppImage` file below
+            - **Windows**: Download the `.msi` installer below
+            
+            ### ✨ Features
+            - Interactive timeline view with step-by-step events
+            - Graph visualization of ownership relationships
+            - Monaco code editor with syntax highlighting
+            - Query interface for debugging questions
+            - Teaching and debug modes
+            
+            ### 📚 Documentation
+            - [Quick Start Guide](https://github.com/dedsecrattle/ownsight/blob/main/QUICKSTART.md)
+            - [Architecture](https://github.com/dedsecrattle/ownsight/blob/main/ARCHITECTURE.md)
+            - [Full README](https://github.com/dedsecrattle/ownsight/blob/main/README.md)
+            
+            ### 🐛 Found a bug?
+            Please report it in the [Issues](https://github.com/dedsecrattle/ownsight/issues) section.
           releaseDraft: true
           prerelease: false
+          args: ${{ matrix.args }}
