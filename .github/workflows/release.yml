@@ -1,16 +1,68 @@
 name: Release Desktop App
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 0.1.0)'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create_release.outputs.id }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          release_name: Ownsight v${{ github.event.inputs.version }}
+          body: |
+            ## Ownsight v${{ github.event.inputs.version }} - Rust Ownership Visualizer
+            
+            ### 🎉 What's New
+            Interactive visualization tool for understanding Rust ownership and borrowing.
+            
+            ### 📦 Installation
+            
+            **CLI Tool:**
+            ```bash
+            cargo install ownsight-cli
+            ```
+            
+            **Desktop App:**
+            - **macOS**: Download the `.dmg` file below
+            - **Linux**: Download the `.AppImage` file below
+            - **Windows**: Download the `.msi` installer below
+            
+            ### ✨ Features
+            - Interactive timeline view with step-by-step events
+            - Graph visualization of ownership relationships
+            - Monaco code editor with syntax highlighting
+            - Query interface for debugging questions
+            - Teaching and debug modes
+            
+            ### 📚 Documentation
+            - [Quick Start Guide](https://github.com/dedsecrattle/ownsight/blob/main/QUICKSTART.md)
+            - [Architecture](https://github.com/dedsecrattle/ownsight/blob/main/ARCHITECTURE.md)
+            - [Full README](https://github.com/dedsecrattle/ownsight/blob/main/README.md)
+            
+            ### 🐛 Found a bug?
+            Please report it in the [Issues](https://github.com/dedsecrattle/ownsight/issues) section.
+          draft: false
+          prerelease: false
+
   build-desktop:
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
@@ -59,40 +111,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectPath: ui
-          tagName: ${{ github.ref_name }}
-          releaseName: 'Ownsight v__VERSION__'
-          releaseBody: |
-            ## Ownsight v__VERSION__ - Rust Ownership Visualizer
-            
-            ### 🎉 What's New
-            Interactive visualization tool for understanding Rust ownership and borrowing.
-            
-            ### 📦 Installation
-            
-            **CLI Tool:**
-            ```bash
-            cargo install ownsight-cli
-            ```
-            
-            **Desktop App:**
-            - **macOS**: Download the `.dmg` file below
-            - **Linux**: Download the `.AppImage` file below
-            - **Windows**: Download the `.msi` installer below
-            
-            ### ✨ Features
-            - Interactive timeline view with step-by-step events
-            - Graph visualization of ownership relationships
-            - Monaco code editor with syntax highlighting
-            - Query interface for debugging questions
-            - Teaching and debug modes
-            
-            ### 📚 Documentation
-            - [Quick Start Guide](https://github.com/dedsecrattle/ownsight/blob/main/QUICKSTART.md)
-            - [Architecture](https://github.com/dedsecrattle/ownsight/blob/main/ARCHITECTURE.md)
-            - [Full README](https://github.com/dedsecrattle/ownsight/blob/main/README.md)
-            
-            ### 🐛 Found a bug?
-            Please report it in the [Issues](https://github.com/dedsecrattle/ownsight/issues) section.
-          releaseDraft: true
-          prerelease: false
+          tagName: v${{ github.event.inputs.version }}
+          releaseId: ${{ needs.create-release.outputs.release_id }}
           args: ${{ matrix.args }}
