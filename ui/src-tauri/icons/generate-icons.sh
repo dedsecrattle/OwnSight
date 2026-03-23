@@ -88,9 +88,20 @@ PYEOF
     sips -z 1024 1024 icon-1024.png --out icon.iconset/icon_512x512@2x.png
     iconutil -c icns icon.iconset -o icon.icns
     rm -rf icon.iconset
+    
+    # Create .ico for Windows using sips (convert to PNG then combine)
+    # Windows .ico needs multiple sizes embedded
+    if command -v convert &> /dev/null; then
+        convert icon-1024.png -define icon:auto-resize=256,128,64,48,32,16 icon.ico
+    else
+        # Fallback: just copy the 256x256 as .ico (not ideal but works)
+        cp 128x128@2x.png icon.ico 2>/dev/null || echo "Warning: Could not create .ico"
+    fi
 else
     echo "No image conversion tool found. Icons may not work properly."
+    # Create a basic .ico file as fallback
+    cp icon.png icon.ico 2>/dev/null || echo "Warning: Could not create .ico"
 fi
 
 echo "Icon generation complete!"
-ls -lh *.png *.icns 2>/dev/null || true
+ls -lh *.png *.icns *.ico 2>/dev/null || true
