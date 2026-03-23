@@ -17,18 +17,33 @@ EOF
 
 # Check if ImageMagick is available
 if command -v convert &> /dev/null; then
-    echo "Using ImageMagick to generate icons..."
+    echo "Using ImageMagick (convert) to generate icons..."
     convert icon.svg -resize 32x32 32x32.png
     convert icon.svg -resize 128x128 128x128.png
     convert icon.svg -resize 256x256 128x128@2x.png
     convert icon.svg -resize 512x512 icon.png
-    convert icon.svg -resize 1024x1024 icon.icns
+    # Create proper .ico with multiple sizes embedded
+    convert icon.svg \( -clone 0 -resize 16x16 \) \
+                     \( -clone 0 -resize 32x32 \) \
+                     \( -clone 0 -resize 48x48 \) \
+                     \( -clone 0 -resize 64x64 \) \
+                     \( -clone 0 -resize 128x128 \) \
+                     \( -clone 0 -resize 256x256 \) \
+                     -delete 0 -colors 256 icon.ico
 elif command -v magick &> /dev/null; then
     echo "Using ImageMagick (magick) to generate icons..."
     magick icon.svg -resize 32x32 32x32.png
     magick icon.svg -resize 128x128 128x128.png
     magick icon.svg -resize 256x256 128x128@2x.png
     magick icon.svg -resize 512x512 icon.png
+    # Create proper .ico with multiple sizes embedded
+    magick icon.svg \( -clone 0 -resize 16x16 \) \
+                    \( -clone 0 -resize 32x32 \) \
+                    \( -clone 0 -resize 48x48 \) \
+                    \( -clone 0 -resize 64x64 \) \
+                    \( -clone 0 -resize 128x128 \) \
+                    \( -clone 0 -resize 256x256 \) \
+                    -delete 0 -colors 256 icon.ico
     magick icon.svg -resize 1024x1024 icon.icns
 elif command -v sips &> /dev/null; then
     # macOS native tool
@@ -90,18 +105,27 @@ PYEOF
     iconutil -c icns icon.iconset -o icon.icns
     rm -rf icon.iconset
     
-    # Create .ico for Windows using sips (convert to PNG then combine)
-    # Windows .ico needs multiple sizes embedded
+    # Create .ico for Windows - try ImageMagick first, fallback to Python
     if command -v convert &> /dev/null; then
-        convert icon-1024.png -define icon:auto-resize=256,128,64,48,32,16 icon.ico
+        convert icon-1024.png \( -clone 0 -resize 16x16 \) \
+                              \( -clone 0 -resize 32x32 \) \
+                              \( -clone 0 -resize 48x48 \) \
+                              \( -clone 0 -resize 64x64 \) \
+                              \( -clone 0 -resize 128x128 \) \
+                              \( -clone 0 -resize 256x256 \) \
+                              -delete 0 -colors 256 icon.ico
+    elif command -v python3 &> /dev/null && python3 -c "from PIL import Image" 2>/dev/null; then
+        # Use Python PIL to create proper .ico
+        python3 << 'PYEOF'
+from PIL import Image
+img = Image.open('icon-1024.png')
+img.save('icon.ico', format='ICO', sizes=[(16,16), (32,32), (48,48), (64,64), (128,128), (256,256)])
+PYEOF
     else
-        # Fallback: just copy the 256x256 as .ico (not ideal but works)
-        cp 128x128@2x.png icon.ico 2>/dev/null || echo "Warning: Could not create .ico"
+        echo "Warning: Could not create proper .ico file - ImageMagick or PIL required"
     fi
 else
     echo "No image conversion tool found. Icons may not work properly."
-    # Create a basic .ico file as fallback
-    cp icon.png icon.ico 2>/dev/null || echo "Warning: Could not create .ico"
 fi
 
 echo "Icon generation complete!"
