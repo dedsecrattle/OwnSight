@@ -1,9 +1,16 @@
 [package]
 name = "ownsight-driver"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
-license.workspace = true
+version = "0.1.0"
+edition = "2021"
+description = "Rust compiler integration and analysis driver for Ownsight"
+authors = ["Ownsight Contributors"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/ownsight"
+homepage = "https://github.com/yourusername/ownsight"
+documentation = "https://docs.rs/ownsight-driver"
+keywords = ["rust", "ownership", "compiler", "analysis", "parser"]
+categories = ["development-tools", "parser-implementations"]
+readme = "../../README.md"
 
 [dependencies]
 ownsight-core = { path = "../ownsight-core" }

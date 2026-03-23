@@ -1,9 +1,16 @@
 [package]
 name = "ownsight-cli"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
-license.workspace = true
+version = "0.1.0"
+edition = "2021"
+description = "CLI tool for visualizing Rust ownership and borrowing"
+authors = ["Ownsight Contributors"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/ownsight"
+homepage = "https://github.com/yourusername/ownsight"
+documentation = "https://docs.rs/ownsight-cli"
+keywords = ["rust", "ownership", "borrow-checker", "visualization", "cli"]
+categories = ["development-tools", "visualization", "command-line-utilities"]
+readme = "../../README.md"
 
 [[bin]]
 name = "cargo-ownership-viz"
