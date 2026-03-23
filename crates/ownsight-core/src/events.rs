@@ -26,7 +26,7 @@ impl EventBuilder {
         Event::new(self.next_id(), kind, variable_id, span, line_number, explanation)
     }
     
-    fn generate_explanation(&self, kind: &EventKind, var_id: VariableId) -> String {
+    fn generate_explanation(&self, kind: &EventKind, _var_id: VariableId) -> String {
         match kind {
             EventKind::Create => format!("Variable created"),
             EventKind::MoveOut => format!("Value moved out, variable no longer usable"),

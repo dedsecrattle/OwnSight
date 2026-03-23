@@ -31,7 +31,7 @@ impl SimpleAnalyzer {
         let lines: Vec<&str> = source.lines().collect();
         
         let mut var_counter = 0;
-        let mut event_counter = 0;
+        let _event_counter = 0;
         let mut var_map: HashMap<String, VariableId> = HashMap::new();
         let mut event_builder = EventBuilder::new();
         
@@ -156,7 +156,7 @@ impl SimpleAnalyzer {
         Ok(parsed)
     }
     
-    fn parse_let_statement(&self, line: &str, line_num: usize, filename: &str) -> Option<VarInfo> {
+    fn parse_let_statement(&self, line: &str, _line_num: usize, _filename: &str) -> Option<VarInfo> {
         let is_mutable = line.contains("let mut ");
         let after_let = if is_mutable {
             line.strip_prefix("let mut ")?.trim()
