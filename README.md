@@ -2,7 +2,8 @@
 
 [![Crates.io](https://img.shields.io/crates/v/ownsight-cli)](https://crates.io/crates/ownsight-cli)
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](LICENSE-MIT)
-[![GitHub Release](https://img.shields.io/github/v/release/dedsecrattle/ownsight)](https://github.com/dedsecrattle/ownsight/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/dedsecrattle/ownsight)](https://github.com/dedsecrattle/ownsight/releases/latest)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://dedsecrattle.github.io/ownsight/)
 
 A dynamic, interactive tool for visualizing Rust ownership, borrowing, and lifetimes. Built with a two-layer architecture: Layer 1 for exam/learning use cases, Layer 2 for real debugging and code intelligence.
 
@@ -28,6 +29,14 @@ Download the latest release for your platform:
 - **macOS**: [Download .dmg](https://github.com/dedsecrattle/ownsight/releases/latest)
 - **Linux**: [Download .AppImage](https://github.com/dedsecrattle/ownsight/releases/latest)
 - **Windows**: [Download .msi](https://github.com/dedsecrattle/ownsight/releases/latest)
+
+## 📚 [Documentation](https://dedsecrattle.github.io/ownsight/)
+
+Complete documentation including:
+- [Quick Start Guide](https://dedsecrattle.github.io/ownsight/quickstart.html)
+- [Layer 2: MIR Backend](https://dedsecrattle.github.io/ownsight/usage/layer2.html)
+- [Desktop App Guide](https://dedsecrattle.github.io/ownsight/usage/desktop.html)
+- [CLI Tool Guide](https://dedsecrattle.github.io/ownsight/usage/cli.html)
 
 ## ✨ Features
 
