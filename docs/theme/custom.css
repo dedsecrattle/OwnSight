@@ -1,0 +1,33 @@
+/* Fix header transparency and overlap */
+#menu-bar {
+  z-index: 100;
+  background-color: var(--bg) !important;
+  opacity: 1 !important;
+  border-bottom: 1px solid var(--sidebar-bg);
+}
+
+/* Add padding to prevent content overlap with header */
+.page {
+  padding-top: 70px;
+}
+
+/* Ensure content doesn't hide under sticky header */
+.content {
+  margin-top: 0;
+}
+
+/* Better spacing for badges */
+.content > p:first-of-type {
+  margin-top: 1.5rem;
+}
+
+/* Fix subtitle positioning */
+.content > p:first-of-type img {
+  display: inline-block;
+  margin: 0.25rem 0.25rem 0.5rem 0;
+}
+
+/* Better spacing for the intro paragraph */
+.content > h1:first-child + p {
+  margin-top: 2rem;
+}
