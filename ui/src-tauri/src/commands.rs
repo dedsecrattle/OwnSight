@@ -2,6 +2,12 @@ use ownsight_core::{AnalysisMode, ProgramAnalysis, VariableId};
 use ownsight_driver::{AnalyzerBackend, create_analyzer};
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Serialize)]
+pub struct BackendAvailability {
+    pub simple: bool,
+    pub mir: bool,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AnalyzeRequest {
     pub code: String,
@@ -96,4 +102,12 @@ pub fn query_what_borrows(
     };
     
     Ok(analyzer.query_what_borrows(VariableId(var_id), line))
+}
+
+#[tauri::command]
+pub fn check_backend_availability() -> BackendAvailability {
+    BackendAvailability {
+        simple: true,
+        mir: cfg!(feature = "mir"),
+    }
 }

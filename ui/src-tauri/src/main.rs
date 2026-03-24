@@ -10,6 +10,7 @@ fn main() {
             commands::query_why_cant_use,
             commands::query_where_moved,
             commands::query_what_borrows,
+            commands::check_backend_availability,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
