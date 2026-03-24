@@ -1,0 +1,22 @@
+[book]
+title = "Ownsight Documentation"
+description = "Rust Ownership Visualizer Documentation"
+authors = ["Ownsight Contributors"]
+language = "en"
+multilingual = false
+src = "docs/src"
+
+[build]
+build-dir = "book"
+
+[output.html]
+default-theme = "dark"
+preferred-dark-theme = "ayu"
+git-repository-url = "https://github.com/dedsecrattle/ownsight"
+git-repository-icon = "fa-github"
+
+[output.html.search]
+enable = true
+
+[output.html.playground]
+editable = true
