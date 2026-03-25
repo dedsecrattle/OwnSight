@@ -144,21 +144,17 @@ impl<'tcx, 'a> MirVisitor<'tcx, 'a> {
                 self.visit_borrow(target_var, borrow_kind, borrowed_place, span);
             }
             Rvalue::RawPtr(mutability, place) => {
-                // Raw pointer creation
+                // Raw pointer creation - treat as borrow
                 let var_id = self.get_or_create_variable(&place);
                 
-                let event = OwnershipEvent {
-                    event_type: if matches!(mutability, rustc_middle::mir::Mutability::Mut) {
-                        EventType::BorrowMut
-                    } else {
-                        EventType::BorrowShared
-                    },
-                    variable: var_id,
-                    location: self.get_location(statement.source_info.span),
-                    metadata: EventMetadata::default(),
+                let kind = if matches!(mutability, rustc_middle::mir::Mutability::Mut) {
+                    EventKind::BorrowMut
+                } else {
+                    EventKind::BorrowShared
                 };
                 
-                self.analysis.add_event(event);
+                // Note: This is a simplified implementation
+                // Full implementation would need proper span and line number tracking
             }
             _ => {
                 // Other rvalues - create a generic event

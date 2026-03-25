@@ -79,7 +79,7 @@ ownsight/
 
 ## 📦 Installation
 
-### Option 1: Download Pre-Built Binaries (Recommended - includes MIR backend)
+### Option 1: Download Pre-Built Binaries (Recommended)
 
 **Desktop App:**
 
@@ -89,7 +89,7 @@ Visit the [releases page](https://github.com/dedsecrattle/ownsight/releases) and
 - **Linux**: `ownsight_x.x.x_amd64.AppImage` (Universal)
 - **Windows**: `Ownsight_x.x.x_x64_en-US.msi` (Installer)
 
-**CLI Tool with MIR Support:**
+**CLI Tool:**
 
 Download from [CLI releases](https://github.com/dedsecrattle/ownsight/releases) for your platform:
 
@@ -97,22 +97,39 @@ Download from [CLI releases](https://github.com/dedsecrattle/ownsight/releases) 
 - **Linux**: `cargo-ownership-viz-linux-x64`
 - **Windows**: `cargo-ownership-viz-windows-x64.exe`
 
-All pre-built binaries include the **MIR backend** for compiler-accurate analysis!
+All binaries include the **Simple backend** for educational ownership visualization.
 
-### Option 2: Install from crates.io (Simple backend only)
+### Option 2: Install from crates.io
 
 ```bash
 cargo install ownsight-cli
 ```
 
-Note: The crates.io version uses the Simple backend by default. For MIR support, use pre-built binaries or build from source.
+### Option 3: Advanced - MIR Backend (Optional)
 
-### Option 3: Build from Source
+For users who want compiler-accurate analysis using Rust's MIR (Mid-level Intermediate Representation):
+
+**Note:** The MIR backend is experimental and requires nightly Rust with rustc-dev components. Most users should use the Simple backend.
+
+```bash
+# Install nightly Rust
+rustup toolchain install nightly
+rustup component add rustc-dev llvm-tools-preview --toolchain nightly
+
+# Build MIR backend from source (advanced users only)
+git clone https://github.com/dedsecrattle/ownsight
+cd ownsight/crates/ownsight-mir
+cargo +nightly build --release --features rustc
+```
+
+The MIR backend is currently in development and may not work reliably across all environments.
+
+### Option 4: Build from Source
 
 **Prerequisites:**
 
-- Rust (stable for Simple backend, nightly for MIR backend)
-- Bun (for UI development)
+- Rust (stable)
+- Bun (for desktop app development)
 - Platform-specific dependencies (see below)
 
 **Clone and build:**
@@ -121,22 +138,13 @@ Note: The crates.io version uses the Simple backend by default. For MIR support,
 git clone https://github.com/dedsecrattle/ownsight.git
 cd ownsight
 
-# Build with Simple backend (stable Rust)
-cargo build --release
+# Build CLI tool
+cargo build --release -p ownsight-cli
 
-# Build with MIR backend (nightly Rust)
-rustup toolchain install nightly
-rustup component add rustc-dev llvm-tools-preview --toolchain nightly
-cargo +nightly build --release --features mir
-
-# Install CLI tool with MIR support
-cd crates/ownsight-cli
-cargo +nightly install --path . --features mir
-
-# Build desktop app with MIR support
-cd ../../ui
+# Build desktop app
+cd ui
 bun install
-bun run tauri build -- --features mir
+bun run tauri build
 ```
 
 **Platform-specific dependencies:**

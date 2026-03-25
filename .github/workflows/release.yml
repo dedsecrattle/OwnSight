@@ -90,10 +90,8 @@ jobs:
         run: |
           choco install imagemagick -y
 
-      - name: Setup Rust (Nightly for MIR support)
-        uses: dtolnay/rust-toolchain@nightly
-        with:
-          components: rustc-dev, llvm-tools-preview
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Install Rust targets (macOS only)
         if: matrix.platform == 'macos-latest'
@@ -130,4 +128,4 @@ jobs:
           projectPath: ui
           tagName: v${{ github.event.inputs.version }}
           releaseId: ${{ needs.create-release.outputs.release_id }}
-          args: ${{ matrix.args }} --features mir
+          args: ${{ matrix.args }}

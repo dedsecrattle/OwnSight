@@ -90,10 +90,11 @@ impl<'tcx> PartialMoveAnalyzer<'tcx> {
         // Traverse all statements looking for moves of field projections
         for (_, bb_data) in body.basic_blocks.iter_enumerated() {
             for statement in &bb_data.statements {
-                if let mir::StatementKind::Assign(box (place, rvalue)) = &statement.kind {
+                use rustc_middle::mir::{StatementKind, Rvalue, Operand};
+                if let StatementKind::Assign(box (place, rvalue)) = &statement.kind {
                     // Check if rvalue is a move from a field
-                    if let mir::Rvalue::Use(operand) = rvalue {
-                        if let mir::Operand::Move(source_place) = operand {
+                    if let Rvalue::Use(operand) = rvalue {
+                        if let Operand::Move(source_place) = operand {
                             if !source_place.projection.is_empty() {
                                 // This is a move from a projection (field access)
                                 // Track it as a partial move
