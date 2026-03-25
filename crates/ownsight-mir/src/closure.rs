@@ -72,13 +72,15 @@ impl<'tcx> ClosureAnalyzer<'tcx> {
     /// Determine how a variable is captured
     fn determine_capture_mode(&self, closure_def_id: DefId, upvar_idx: usize) -> CaptureMode {
         // Try to get capture information from the type system
-        if let Some(captures) = self.tcx.closure_captures(closure_def_id) {
+        // closure_captures now requires LocalDefId
+        if let Some(local_def_id) = closure_def_id.as_local() {
+            let captures = self.tcx.closure_captures(local_def_id);
             if let Some(capture) = captures.get(upvar_idx) {
                 return match capture.info.capture_kind {
                     rustc_middle::ty::UpvarCapture::ByValue => CaptureMode::ByValue,
                     rustc_middle::ty::UpvarCapture::ByRef(borrow_kind) => {
                         match borrow_kind {
-                            rustc_middle::mir::BorrowKind::Mut { .. } => CaptureMode::ByMutRef,
+                            rustc_middle::ty::BorrowKind::MutBorrow => CaptureMode::ByMutRef,
                             _ => CaptureMode::ByRef,
                         }
                     }

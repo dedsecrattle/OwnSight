@@ -39,11 +39,11 @@ impl<'tcx> AsyncAnalyzer<'tcx> {
 
     /// Check if a function is async
     pub fn is_async_fn(&self, def_id: DefId) -> bool {
-        // Check if the function returns a Future/Generator
+        // Check if the function returns a Future/Coroutine
         let ty = self.tcx.type_of(def_id).instantiate_identity();
         
-        // Async functions are represented as generators in MIR
-        matches!(ty.kind(), TyKind::Generator(_, _, _))
+        // Async functions are represented as coroutines in MIR
+        matches!(ty.kind(), TyKind::Coroutine(_, _))
     }
 
     /// Analyze async function
@@ -55,19 +55,16 @@ impl<'tcx> AsyncAnalyzer<'tcx> {
             requires_sync: false,
         };
 
-        // Check if this is a generator (async function)
-        if let Some(generator_kind) = body.generator_kind() {
-            context.is_async = matches!(
-                generator_kind,
-                rustc_hir::GeneratorKind::Async(_)
-            );
-
-            if context.is_async {
-                // Find all yield/await points
-                for (bb_idx, bb_data) in body.basic_blocks.iter_enumerated() {
-                    if let Some(ref terminator) = bb_data.terminator {
-                        if let TerminatorKind::Yield { .. } = terminator.kind {
-                            // This is an await point
+        // Check if this is a coroutine (async function)
+        // Note: In newer rustc, coroutine_kind is not directly accessible from Body
+        // We'll check for Yield terminators to identify async points
+        
+        // Find all yield/await points
+        for (bb_idx, bb_data) in body.basic_blocks.iter_enumerated() {
+            if let Some(ref terminator) = bb_data.terminator {
+                if let TerminatorKind::Yield { .. } = terminator.kind {
+                    context.is_async = true;
+                    // This is an await point
                             let suspension_point = SuspensionPoint {
                                 location: bb_idx.index(),
                                 line_number: 0, // Would need source map lookup
@@ -101,7 +98,13 @@ impl<'tcx> AsyncAnalyzer<'tcx> {
         let mut send_vars = HashSet::new();
 
         // Any variable live across an await point must be Send
-        if let Some(_) = body.generator_kind() {
+        // Check for Yield terminators to identify async functions
+        let has_yields = body.basic_blocks.iter().any(|bb_data| {
+            bb_data.terminator.as_ref()
+                .map_or(false, |t| matches!(t.kind, TerminatorKind::Yield { .. }))
+        });
+        
+        if has_yields {
             // Simplified: assume all locals might need to be Send
             for local in body.local_decls.indices() {
                 send_vars.insert(local);

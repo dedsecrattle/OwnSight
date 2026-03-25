@@ -64,11 +64,15 @@ impl RustcDriver {
         };
 
         // Run the compiler
-        rustc_driver::catch_fatal_errors(|| {
-            rustc_driver::RunCompiler::new(&args, &mut callbacks).run()
-        })
-        .map_err(|_| anyhow::anyhow!("Compilation failed"))?
-        .map_err(|_| anyhow::anyhow!("Compilation failed"))?;
+        let result = rustc_driver::catch_fatal_errors(|| {
+            let mut compiler = rustc_driver::RunCompiler::new(&args, &mut callbacks);
+            compiler.run()
+        });
+        
+        match result {
+            Ok(Ok(())) => {},
+            _ => return Err(anyhow::anyhow!("Compilation failed")),
+        }
 
         Ok(analysis)
     }
@@ -134,29 +138,27 @@ impl rustc_driver::Callbacks for OwnsightCallbacks<'_> {
 impl<'a> OwnsightCallbacks<'a> {
     fn extract_mir<'tcx>(&mut self, tcx: TyCtxt<'tcx>) {
         // Get all local def ids
-        let hir = tcx.hir();
+        let hir_map = tcx.hir();
         
-        for item_id in hir.items() {
-            let item = hir.item(item_id);
+        for item_id in hir_map.items() {
+            let item = hir_map.item(item_id);
             
             // Check if this is a function
-            if let rustc_hir::ItemKind::Fn(_, _, _) = item.kind {
-                let def_id = item_id.owner_id.to_def_id();
+            if matches!(item.kind, rustc_hir::ItemKind::Fn { .. }) {
+                let def_id = item_id.owner_id.def_id;
                 
                 // Get the MIR for this function
-                if let Ok(body) = tcx.mir_built(def_id.expect_local()) {
-                    let body = body.borrow();
-                    
-                    // Create a visitor to traverse the MIR
-                    let mut visitor = MirVisitor::new(
-                        tcx,
-                        self.analysis,
-                        self.mode.clone(),
-                        def_id,
-                    );
-                    
-                    visitor.visit_body(&body);
-                }
+                let body = tcx.mir_built(def_id).borrow();
+                
+                // Create a visitor to traverse the MIR
+                let mut visitor = MirVisitor::new(
+                    tcx,
+                    self.analysis,
+                    self.mode.clone(),
+                    def_id.to_def_id(),
+                );
+                
+                visitor.visit_body(&body);
             }
         }
     }

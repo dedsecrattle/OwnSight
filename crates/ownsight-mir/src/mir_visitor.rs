@@ -143,8 +143,22 @@ impl<'tcx, 'a> MirVisitor<'tcx, 'a> {
             Rvalue::Ref(_, borrow_kind, borrowed_place) => {
                 self.visit_borrow(target_var, borrow_kind, borrowed_place, span);
             }
-            Rvalue::AddressOf(mutability, place) => {
-                self.visit_address_of(target_var, mutability, place, span);
+            Rvalue::RawPtr(mutability, place) => {
+                // Raw pointer creation
+                let var_id = self.get_or_create_variable(&place);
+                
+                let event = OwnershipEvent {
+                    event_type: if matches!(mutability, rustc_middle::mir::Mutability::Mut) {
+                        EventType::BorrowMut
+                    } else {
+                        EventType::BorrowShared
+                    },
+                    variable: var_id,
+                    location: self.get_location(statement.source_info.span),
+                    metadata: EventMetadata::default(),
+                };
+                
+                self.analysis.add_event(event);
             }
             _ => {
                 // Other rvalues - create a generic event
@@ -370,7 +384,7 @@ impl<'tcx, 'a> MirVisitor<'tcx, 'a> {
         let hi = source_map.lookup_char_pos(span.hi());
 
         Span::new(
-            lo.file.name.prefer_remapped().to_string(),
+            lo.file.name.to_string_lossy().to_string(),
             lo.line,
             lo.col.0,
             hi.line,
