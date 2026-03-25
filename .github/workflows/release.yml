@@ -93,8 +93,13 @@ jobs:
       - name: Setup Rust (Nightly for MIR support)
         uses: dtolnay/rust-toolchain@nightly
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
           components: rustc-dev, llvm-tools-preview
+
+      - name: Install Rust targets (macOS only)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          rustup target add aarch64-apple-darwin
+          rustup target add x86_64-apple-darwin
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -125,4 +130,4 @@ jobs:
           projectPath: ui
           tagName: v${{ github.event.inputs.version }}
           releaseId: ${{ needs.create-release.outputs.release_id }}
-          args: ${{ matrix.args }}
+          args: ${{ matrix.args }} --features mir
