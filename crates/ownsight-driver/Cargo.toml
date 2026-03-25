@@ -21,7 +21,7 @@ serde_json.workspace = true
 
 [features]
 default = []
-mir = ["ownsight-mir"]
+mir = ["ownsight-mir", "ownsight-mir/rustc"]
 
 [dev-dependencies]
 insta = "1.34"
