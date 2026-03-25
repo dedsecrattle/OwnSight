@@ -90,10 +90,11 @@ jobs:
         run: |
           choco install imagemagick -y
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+      - name: Setup Rust (Nightly for MIR support)
+        uses: dtolnay/rust-toolchain@nightly
         with:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          components: rustc-dev, llvm-tools-preview
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2

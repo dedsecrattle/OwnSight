@@ -88,7 +88,23 @@ cargo ownership-viz --file example.rs --backend mir
 
 ## Installation for MIR Backend
 
-### Prerequisites
+### Option 1: Pre-Built Binaries (Recommended)
+
+**No setup required!** Download pre-built binaries with MIR support included:
+
+**Desktop App:**
+- Download from [GitHub Releases](https://github.com/dedsecrattle/ownsight/releases)
+- MIR backend works immediately after installation
+- No nightly Rust or rustc-dev needed
+
+**CLI Tool:**
+- Download from [CLI Releases](https://github.com/dedsecrattle/ownsight/releases)
+- Extract and add to PATH
+- MIR backend ready to use
+
+### Option 2: Build from Source
+
+**Prerequisites:**
 
 1. **Install Nightly Rust**:
    ```bash
@@ -102,8 +118,13 @@ cargo ownership-viz --file example.rs --backend mir
 
 3. **Build with MIR Feature**:
    ```bash
-   cd crates/ownsight-mir
-   cargo +nightly build --features rustc
+   # CLI
+   cd crates/ownsight-cli
+   cargo +nightly build --release --features mir
+   
+   # Desktop App
+   cd ui
+   bun run tauri build -- --features mir
    ```
 
 ## Layer 2 Event Types

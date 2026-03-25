@@ -1,0 +1,131 @@
+name: Release CLI with MIR Support
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 0.2.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-cli:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest'
+            target: 'x86_64-apple-darwin'
+            artifact_name: 'cargo-ownership-viz-macos-x64'
+          - platform: 'macos-latest'
+            target: 'aarch64-apple-darwin'
+            artifact_name: 'cargo-ownership-viz-macos-arm64'
+          - platform: 'ubuntu-22.04'
+            target: 'x86_64-unknown-linux-gnu'
+            artifact_name: 'cargo-ownership-viz-linux-x64'
+          - platform: 'windows-latest'
+            target: 'x86_64-pc-windows-msvc'
+            artifact_name: 'cargo-ownership-viz-windows-x64.exe'
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust (Nightly for MIR support)
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: ${{ matrix.target }}
+          components: rustc-dev, llvm-tools-preview
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './crates -> target'
+
+      - name: Build CLI with MIR support
+        run: |
+          cd crates/ownsight-cli
+          cargo +nightly build --release --target ${{ matrix.target }} --features mir
+
+      - name: Prepare artifact
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          if [[ "${{ matrix.platform }}" == "windows-latest" ]]; then
+            cp target/${{ matrix.target }}/release/cargo-ownership-viz.exe artifacts/${{ matrix.artifact_name }}
+          else
+            cp target/${{ matrix.target }}/release/cargo-ownership-viz artifacts/${{ matrix.artifact_name }}
+            chmod +x artifacts/${{ matrix.artifact_name }}
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: artifacts/${{ matrix.artifact_name }}
+
+  create-release:
+    needs: build-cli
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: cli-v${{ github.event.inputs.version }}
+          name: Ownsight CLI v${{ github.event.inputs.version }}
+          body: |
+            ## Ownsight CLI v${{ github.event.inputs.version }}
+            
+            ### 🎉 What's New
+            Command-line tool for visualizing Rust ownership and borrowing with MIR backend support.
+            
+            ### 📦 Installation
+            
+            **From Pre-built Binaries (Recommended - includes MIR support):**
+            
+            Download the appropriate binary for your platform below and add it to your PATH.
+            
+            **From crates.io:**
+            ```bash
+            cargo install ownsight-cli
+            ```
+            Note: crates.io version uses Simple backend by default. For MIR support, use pre-built binaries or build from source.
+            
+            ### ✨ Features
+            - **MIR Backend**: Compiler-backed analysis using Rust's MIR (included in pre-built binaries)
+            - **Simple Backend**: Fast syntax-based analysis (always available)
+            - Multiple output formats (timeline, JSON, text)
+            - Teaching and debug modes
+            
+            ### 🚀 Usage
+            
+            ```bash
+            # Basic analysis (Simple backend)
+            cargo-ownership-viz --file example.rs
+            
+            # MIR backend (accurate, compiler-backed)
+            cargo-ownership-viz --file example.rs --backend mir
+            
+            # From stdin
+            echo 'fn main() { let s = String::from("hello"); }' | cargo-ownership-viz --stdin
+            ```
+            
+            ### 📚 Documentation
+            - [Quick Start Guide](https://github.com/dedsecrattle/ownsight/blob/main/QUICKSTART.md)
+            - [Layer 2 MIR Backend](https://github.com/dedsecrattle/ownsight/blob/main/LAYER2.md)
+            - [Full README](https://github.com/dedsecrattle/ownsight/blob/main/README.md)
+          files: |
+            artifacts/**/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -79,13 +79,9 @@ ownsight/
 
 ## 📦 Installation
 
-### Option 1: Install from crates.io (Recommended)
+### Option 1: Download Pre-Built Binaries (Recommended - includes MIR backend)
 
-```bash
-cargo install ownsight-cli
-```
-
-### Option 2: Download Desktop App
+**Desktop App:**
 
 Visit the [releases page](https://github.com/dedsecrattle/ownsight/releases) and download the installer for your platform:
 
@@ -93,11 +89,29 @@ Visit the [releases page](https://github.com/dedsecrattle/ownsight/releases) and
 - **Linux**: `ownsight_x.x.x_amd64.AppImage` (Universal)
 - **Windows**: `Ownsight_x.x.x_x64_en-US.msi` (Installer)
 
+**CLI Tool with MIR Support:**
+
+Download from [CLI releases](https://github.com/dedsecrattle/ownsight/releases) for your platform:
+
+- **macOS**: `cargo-ownership-viz-macos-x64` or `cargo-ownership-viz-macos-arm64`
+- **Linux**: `cargo-ownership-viz-linux-x64`
+- **Windows**: `cargo-ownership-viz-windows-x64.exe`
+
+All pre-built binaries include the **MIR backend** for compiler-accurate analysis!
+
+### Option 2: Install from crates.io (Simple backend only)
+
+```bash
+cargo install ownsight-cli
+```
+
+Note: The crates.io version uses the Simple backend by default. For MIR support, use pre-built binaries or build from source.
+
 ### Option 3: Build from Source
 
 **Prerequisites:**
 
-- Rust (stable toolchain)
+- Rust (stable for Simple backend, nightly for MIR backend)
 - Bun (for UI development)
 - Platform-specific dependencies (see below)
 
@@ -107,16 +121,22 @@ Visit the [releases page](https://github.com/dedsecrattle/ownsight/releases) and
 git clone https://github.com/dedsecrattle/ownsight.git
 cd ownsight
 
-# Build the Rust workspace
+# Build with Simple backend (stable Rust)
 cargo build --release
 
-# Install CLI tool
-cargo install --path crates/ownsight-cli
+# Build with MIR backend (nightly Rust)
+rustup toolchain install nightly
+rustup component add rustc-dev llvm-tools-preview --toolchain nightly
+cargo +nightly build --release --features mir
 
-# Build desktop app
-cd ui
+# Install CLI tool with MIR support
+cd crates/ownsight-cli
+cargo +nightly install --path . --features mir
+
+# Build desktop app with MIR support
+cd ../../ui
 bun install
-bun run tauri build
+bun run tauri build -- --features mir
 ```
 
 **Platform-specific dependencies:**
