@@ -9,11 +9,12 @@ extern crate rustc_interface;
 extern crate rustc_middle;
 extern crate rustc_session;
 extern crate rustc_span;
+extern crate rustc_hir;
 
 use rustc_driver::Compilation;
-use rustc_interface::{interface, Queries};
+use rustc_interface::interface;
 use rustc_middle::ty::TyCtxt;
-use rustc_session::config::{self, CheckCfg};
+use rustc_session::config;
 
 use crate::mir_visitor::MirVisitor;
 
@@ -63,11 +64,11 @@ impl RustcDriver {
         };
 
         // Run the compiler
-        let compiler = rustc_driver::RunCompiler::new(&args, &mut callbacks);
-        
-        compiler.run().map_err(|_| {
-            anyhow::anyhow!("Compilation failed")
-        })?;
+        rustc_driver::catch_fatal_errors(|| {
+            rustc_driver::RunCompiler::new(&args, &mut callbacks).run()
+        })
+        .map_err(|_| anyhow::anyhow!("Compilation failed"))?
+        .map_err(|_| anyhow::anyhow!("Compilation failed"))?;
 
         Ok(analysis)
     }
@@ -118,7 +119,7 @@ impl rustc_driver::Callbacks for OwnsightCallbacks<'_> {
     fn after_analysis<'tcx>(
         &mut self,
         _compiler: &interface::Compiler,
-        queries: &'tcx Queries<'tcx>,
+        queries: &'tcx interface::Queries<'tcx>,
     ) -> Compilation {
         queries.global_ctxt().unwrap().enter(|tcx| {
             // Extract MIR and analyze

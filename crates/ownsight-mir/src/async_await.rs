@@ -6,7 +6,7 @@ use std::collections::HashSet;
 extern crate rustc_middle;
 extern crate rustc_hir;
 
-use rustc_middle::ty::{TyCtxt, TyKind, GeneratorSubsts};
+use rustc_middle::ty::{TyCtxt, TyKind};
 use rustc_middle::mir::{Body, TerminatorKind, Local};
 use rustc_hir::def_id::DefId;
 

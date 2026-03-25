@@ -3,6 +3,9 @@
 //! This crate provides accurate ownership and borrowing analysis by leveraging
 //! the Rust compiler's MIR (Mid-level Intermediate Representation).
 
+#![cfg_attr(feature = "rustc", feature(rustc_private))]
+#![cfg_attr(feature = "rustc", feature(box_patterns))]
+
 #[cfg(feature = "rustc")]
 pub mod driver;
 #[cfg(feature = "rustc")]

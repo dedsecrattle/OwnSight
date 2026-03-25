@@ -8,7 +8,8 @@ extern crate rustc_span;
 extern crate rustc_hir;
 
 use rustc_middle::mir::{self, Body, Local, Place, Rvalue, StatementKind, TerminatorKind, ProjectionElem};
-use rustc_middle::ty::{TyCtxt, DefId, TyKind};
+use rustc_middle::ty::TyCtxt;
+use rustc_span::def_id::DefId;
 use rustc_span::Span as RustcSpan;
 
 use crate::partial_move::PartialMoveAnalyzer;
