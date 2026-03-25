@@ -65,21 +65,21 @@ impl<'tcx> AsyncAnalyzer<'tcx> {
                 if let TerminatorKind::Yield { .. } = terminator.kind {
                     context.is_async = true;
                     // This is an await point
-                            let suspension_point = SuspensionPoint {
-                                location: bb_idx.index(),
-                                line_number: 0, // Would need source map lookup
-                                variables_live: Vec::new(), // Would need liveness analysis
-                            };
-                            context.suspension_points.push(suspension_point);
-                        }
-                    }
+                    let suspension_point = SuspensionPoint {
+                        location: bb_idx.index(),
+                        line_number: 0, // Would need source map lookup
+                        variables_live: Vec::new(), // Would need liveness analysis
+                    };
+                    context.suspension_points.push(suspension_point);
                 }
-
-                // Check Send/Sync requirements
-                // This is simplified - full implementation would check trait bounds
-                context.requires_send = true; // Most async functions require Send
-                context.requires_sync = false;
             }
+        }
+
+        // Check Send/Sync requirements
+        // This is simplified - full implementation would check trait bounds
+        if context.is_async {
+            context.requires_send = true; // Most async functions require Send
+            context.requires_sync = false;
         }
 
         context
