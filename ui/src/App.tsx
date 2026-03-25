@@ -5,13 +5,8 @@ import TimelineView from "./components/TimelineView";
 import GraphView from "./components/GraphView";
 import StepController from "./components/StepController";
 import QueryPanel from "./components/QueryPanel";
-import { ProgramAnalysis } from "./types";
+import { ProgramAnalysis, AnalyzeResponse, BackendAvailability } from "./types";
 import { Play, FileCode, Info, ExternalLink } from "lucide-react";
-
-interface BackendAvailability {
-  simple: boolean;
-  mir: boolean;
-}
 
 function App() {
   const [analysis, setAnalysis] = useState<ProgramAnalysis | null>(null);
@@ -28,6 +23,7 @@ function App() {
     useState<BackendAvailability>({
       simple: true,
       mir: false,
+      mir_error: null,
     });
   const [showMirGuide, setShowMirGuide] = useState(false);
 
@@ -42,7 +38,7 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const result = await invoke<ProgramAnalysis>("analyze_snippet", {
+      const result = await invoke<AnalyzeResponse>("analyze_snippet", {
         request: {
           code,
           filename: "snippet.rs",
@@ -50,8 +46,15 @@ function App() {
           backend,
         },
       });
-      setAnalysis(result);
+      setAnalysis(result.analysis);
       setCurrentStep(0);
+
+      // Show warning if MIR was requested but not used
+      if (backend === "mir" && result.backend_used === "simple") {
+        console.warn(
+          "MIR backend requested but unavailable, using Simple backend",
+        );
+      }
     } catch (err) {
       setError(err as string);
     } finally {

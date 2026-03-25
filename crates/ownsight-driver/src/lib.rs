@@ -24,6 +24,14 @@ pub trait OwnershipAnalyzer {
     fn analyze(&mut self, source: &str, filename: &str) -> Result<ProgramAnalysis>;
 }
 
+// Implement OwnershipAnalyzer for MirAnalyzer when mir feature is enabled
+#[cfg(feature = "mir")]
+impl OwnershipAnalyzer for ownsight_mir::MirAnalyzer {
+    fn analyze(&mut self, source: &str, filename: &str) -> Result<ProgramAnalysis> {
+        self.analyze(source, filename)
+    }
+}
+
 /// Backend availability information
 #[derive(Debug, Clone)]
 pub struct BackendStatus {
