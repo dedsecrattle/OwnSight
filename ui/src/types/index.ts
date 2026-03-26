@@ -154,12 +154,9 @@ export type AnalysisMode = "Teaching" | "Debug";
 
 export interface BackendAvailability {
   simple: boolean;
-  mir: boolean;
-  mir_error: string | null;
 }
 
 export interface AnalyzeResponse {
   analysis: ProgramAnalysis;
   backend_used: string;
-  mir_available: boolean;
 }

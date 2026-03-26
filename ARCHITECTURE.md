@@ -5,7 +5,7 @@
 Ownsight is built with a **two-layer architecture**:
 
 - **Layer 1**: Exam and learning tool - simplified, clear explanations
-- **Layer 2**: Real debugging and code intelligence - precise, compiler-backed analysis
+- **Future**: Enhanced analysis features and tooling integrations
 
 The key principle: **The UI renders facts, it doesn't understand Rust.**
 

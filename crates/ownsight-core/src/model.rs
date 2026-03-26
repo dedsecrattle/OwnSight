@@ -58,7 +58,7 @@ pub enum EventKind {
     Reinit,
     Conflict,
     
-    // Layer 2 events
+    // Advanced events
     PartialMove,
     ClosureCapture,
     AwaitSuspend,

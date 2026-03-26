@@ -147,7 +147,7 @@ fn main() {
 3. Add syntax error handling
 4. Create example gallery in the UI
 
-### Medium Term (Layer 2 Features)
+### Medium Term
 
 1. Enhance simple parser with improved analysis
 2. Add Cargo workspace support

@@ -74,7 +74,7 @@ First public release of Ownsight - Rust Ownership Visualizer.
 - Does not support: closures, async/await, complex pattern matching
 - No cargo workspace integration yet
 
-**Coming in Layer 2**:
+**Coming Next**:
 
 - Enhanced analysis capabilities
 - Full cargo workspace support
