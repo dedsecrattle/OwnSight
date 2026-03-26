@@ -19,5 +19,4 @@ tauri = { version = "1.5", features = ["shell-open"] }
 
 [features]
 default = []
-mir = ["ownsight-driver/mir"]
 custom-protocol = ["tauri/custom-protocol"]

@@ -26,4 +26,3 @@ colored = "2.1"
 
 [features]
 default = []
-mir = ["ownsight-driver/mir"]

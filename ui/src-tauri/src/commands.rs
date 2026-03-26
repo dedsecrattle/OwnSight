@@ -1,12 +1,10 @@
 use ownsight_core::{AnalysisMode, ProgramAnalysis, VariableId};
-use ownsight_driver::{AnalyzerBackend, create_analyzer_with_status, check_mir_availability};
+use ownsight_driver::{create_analyzer};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize)]
 pub struct BackendAvailability {
     pub simple: bool,
-    pub mir: bool,
-    pub mir_error: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -14,14 +12,12 @@ pub struct AnalyzeRequest {
     pub code: String,
     pub filename: Option<String>,
     pub mode: Option<String>,
-    pub backend: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
 pub struct AnalyzeResponse {
     pub analysis: ProgramAnalysis,
     pub backend_used: String,
-    pub mir_available: bool,
 }
 
 #[tauri::command]
@@ -31,62 +27,42 @@ pub fn analyze_snippet(request: AnalyzeRequest) -> Result<AnalyzeResponse, Strin
         _ => AnalysisMode::Teaching,
     };
     
-    let backend = match request.backend.as_deref() {
-        Some("mir") => AnalyzerBackend::Mir,
-        Some("simple") => AnalyzerBackend::Simple,
-        _ => AnalyzerBackend::default(),
-    };
-    
+    let mut analyzer = create_analyzer(mode);
     let filename = request.filename.as_deref().unwrap_or("snippet.rs");
-    
-    let (mut analyzer, status) = create_analyzer_with_status(backend, mode);
     let analysis = analyzer.analyze(&request.code, filename)
         .map_err(|e| e.to_string())?;
     
-    let backend_used = if matches!(backend, AnalyzerBackend::Mir) && status.mir_available {
-        "mir".to_string()
-    } else {
-        "simple".to_string()
-    };
-    
     Ok(AnalyzeResponse {
         analysis,
-        backend_used,
-        mir_available: status.mir_available,
+        backend_used: "simple".to_string(),
     })
 }
 
 #[tauri::command]
-pub fn analyze_file(path: String, mode: Option<String>, backend: Option<String>) -> Result<AnalyzeResponse, String> {
-    let code = std::fs::read_to_string(&path)
-        .map_err(|e| format!("Failed to read file: {}", e))?;
-    
+pub fn analyze_file(path: String, mode: Option<String>) -> Result<AnalyzeResponse, String> {
     let analysis_mode = match mode.as_deref() {
         Some("debug") => AnalysisMode::Debug,
         _ => AnalysisMode::Teaching,
     };
     
-    let analyzer_backend = match backend.as_deref() {
-        Some("mir") => AnalyzerBackend::Mir,
-        Some("simple") => AnalyzerBackend::Simple,
-        _ => AnalyzerBackend::default(),
-    };
+    let code = std::fs::read_to_string(&path)
+        .map_err(|e| format!("Failed to read file: {}", e))?;
     
-    let (mut analyzer, status) = create_analyzer_with_status(analyzer_backend, analysis_mode);
+    let mut analyzer = create_analyzer(analysis_mode);
     let analysis = analyzer.analyze(&code, &path)
         .map_err(|e| e.to_string())?;
     
-    let backend_used = if matches!(analyzer_backend, AnalyzerBackend::Mir) && status.mir_available {
-        "mir".to_string()
-    } else {
-        "simple".to_string()
-    };
-    
     Ok(AnalyzeResponse {
         analysis,
-        backend_used,
-        mir_available: status.mir_available,
+        backend_used: "simple".to_string(),
     })
+}
+
+#[tauri::command]
+pub fn check_backend_availability() -> BackendAvailability {
+    BackendAvailability {
+        simple: true,
+    }
 }
 
 #[tauri::command]
@@ -138,10 +114,7 @@ pub fn query_what_borrows(
 
 #[tauri::command]
 pub fn check_backend_availability() -> BackendAvailability {
-    let status = check_mir_availability();
     BackendAvailability {
-        simple: status.simple_available,
-        mir: status.mir_available,
-        mir_error: status.mir_error,
+        simple: true,
     }
 }

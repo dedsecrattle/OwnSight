@@ -5,7 +5,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/dedsecrattle/ownsight)](https://github.com/dedsecrattle/ownsight/releases/latest)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://dedsecrattle.github.io/ownsight/)
 
-A dynamic, interactive tool for visualizing Rust ownership, borrowing, and lifetimes. Built with a two-layer architecture: Layer 1 for exam/learning use cases, Layer 2 for real debugging and code intelligence.
+A dynamic, interactive tool for visualizing Rust ownership, borrowing, and lifetimes. Built with a focus on learning and teaching Rust's ownership system.
 
 ## 🚀 Quick Start
 
@@ -33,8 +33,8 @@ Download the latest release for your platform:
 ## 📚 [Documentation](https://dedsecrattle.github.io/ownsight/)
 
 Complete documentation including:
+
 - [Quick Start Guide](https://dedsecrattle.github.io/ownsight/quickstart.html)
-- [Layer 2: MIR Backend](https://dedsecrattle.github.io/ownsight/usage/layer2.html)
 - [Desktop App Guide](https://dedsecrattle.github.io/ownsight/usage/desktop.html)
 - [CLI Tool Guide](https://dedsecrattle.github.io/ownsight/usage/cli.html)
 
@@ -49,16 +49,11 @@ Complete documentation including:
 - 📝 **Event Explanations**: Human-readable descriptions of what happens to each variable
 - ⚡ **Fast Analysis**: Syntax-based, no compilation required
 
-### Layer 2 - MIR-Based Analysis (Beta)
+### Query Interface
 
-- � **Compiler-Backed Analysis**: Uses Rust's MIR for accurate ownership tracking
-- 🧬 **Partial Move Detection**: Track field-level moves in structs
-- � **Closure Capture Analysis**: Detect how closures capture variables (ByValue, ByRef, ByMutRef)
-- ⏳ **Async/Await Support**: Identify suspension points and Send/Sync requirements
-- 🎯 **NLL Support**: Non-lexical lifetime analysis foundation
-- 📊 **Function Summaries**: Cross-function ownership analysis
-- 🔍 **Query Interface**: Ask "Why can't I use X here?", "Where was X moved?"
-- 🐛 **Debug Mode**: Precise, type-aware analysis
+- 🔍 **Interactive Questions**: Ask "Why can't I use X here?", "Where was X moved?"
+- 🐛 **Debug Mode**: Detailed analysis for debugging ownership issues
+- � **Event Timeline**: Step through ownership changes line by line
 
 ## Architecture
 
@@ -66,16 +61,10 @@ Complete documentation including:
 ownsight/
 ├── crates/
 │   ├── ownsight-core/      # Core data model (variables, events, graphs)
-│   ├── ownsight-mir/       # MIR-based analyzer (Layer 2, rustc internals)
 │   ├── ownsight-driver/    # Analysis driver (backend selection)
 │   └── ownsight-cli/       # Command-line interface (cargo ownership-viz)
 └── ui/                     # Tauri desktop app (React + TypeScript)
 ```
-
-**Two Analysis Backends:**
-
-- **Simple (Layer 1)**: Fast syntax-based analysis, no compilation needed
-- **MIR (Layer 2)**: Accurate compiler-based analysis using rustc internals
 
 ## 📦 Installation
 
@@ -104,25 +93,6 @@ All binaries include the **Simple backend** for educational ownership visualizat
 ```bash
 cargo install ownsight-cli
 ```
-
-### Option 3: Advanced - MIR Backend (Optional)
-
-For users who want compiler-accurate analysis using Rust's MIR (Mid-level Intermediate Representation):
-
-**Note:** The MIR backend is experimental and requires nightly Rust with rustc-dev components. Most users should use the Simple backend.
-
-```bash
-# Install nightly Rust
-rustup toolchain install nightly
-rustup component add rustc-dev llvm-tools-preview --toolchain nightly
-
-# Build MIR backend from source (advanced users only)
-git clone https://github.com/dedsecrattle/ownsight
-cd ownsight/crates/ownsight-mir
-cargo +nightly build --release --features rustc
-```
-
-The MIR backend is currently in development and may not work reliably across all environments.
 
 ### Option 4: Build from Source
 
@@ -163,17 +133,10 @@ bun run tauri build
 
 ### CLI Tool
 
-**Basic analysis (Simple backend - default):**
+**Basic analysis:**
 
 ```bash
 cargo ownership-viz --file example.rs
-```
-
-**MIR-based analysis (Layer 2):**
-
-```bash
-# Requires nightly Rust + rustc-dev component
-cargo ownership-viz --file example.rs --backend mir
 ```
 
 **Analyze from stdin:**
@@ -200,16 +163,6 @@ cargo ownership-viz --file example.rs --mode teaching
 
 # Debug mode: precise, technical analysis
 cargo ownership-viz --file example.rs --mode debug
-```
-
-**Backend selection:**
-
-```bash
-# Simple backend (fast, syntax-based)
-cargo ownership-viz --file example.rs --backend simple
-
-# MIR backend (accurate, compiler-based)
-cargo ownership-viz --file example.rs --backend mir
 ```
 
 ### Desktop App
@@ -310,26 +263,20 @@ cd ui && bun run tauri dev
 - [x] Graph visualization with React Flow
 - [x] Query interface for debugging questions
 
-### ✅ v0.2.0 (Current - Layer 2 Foundation)
+### ✅ v0.2.0 (Current)
 
-- [x] MIR-based analysis using rustc internals
-- [x] Backend selection (Simple vs MIR)
-- [x] Partial move detection (struct fields)
-- [x] Closure capture analysis (ByValue, ByRef, ByMutRef)
-- [x] Async/await support (suspension points, Send/Sync)
-- [x] NLL foundation (lifetime regions)
-- [x] Function summary framework
-- [x] Extended event types (PartialMove, ClosureCapture, AwaitSuspend, etc.)
+- [x] Improved syntax-based analysis
+- [x] Enhanced query interface
+- [x] Better error messages
+- [x] Performance optimizations
 - [x] Comprehensive test suite
 
-### Next (Layer 2 Enhancements)
+### Next
 
-- [ ] Full Polonius integration for NLL
-- [ ] Cargo workspace support
-- [ ] Cross-crate analysis
 - [ ] Pattern matching flow analysis
-- [ ] Complete function summaries
-- [ ] Performance optimization
+- [ ] Cargo workspace support
+- [ ] Cross-file analysis
+- [ ] Performance optimizations
 - [ ] Incremental analysis
 
 ### Future
@@ -373,6 +320,7 @@ Built with:
 ## 📚 Documentation
 
 - [Quick Start Guide](QUICKSTART.md) - Get started in 5 minutes
+- [Installation Guide](INSTALLATION.md) - Detailed installation instructions
 - [Architecture](ARCHITECTURE.md) - System design and internals
 - [Publishing Guide](PUBLISHING.md) - How to release new versions
 - [Changelog](CHANGELOG.md) - Version history and updates

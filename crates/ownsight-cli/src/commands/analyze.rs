@@ -1,6 +1,6 @@
 use anyhow::{Result, Context};
 use ownsight_core::AnalysisMode;
-use ownsight_driver::{AnalyzerBackend, create_analyzer_with_status};
+use ownsight_driver::create_analyzer;
 use std::fs;
 use std::io::{self, Read};
 
@@ -9,7 +9,6 @@ pub fn run(
     stdin: bool,
     output: Option<String>,
     mode: Option<String>,
-    backend: Option<String>,
     _function: Option<String>,
 ) -> Result<()> {
     let (source, filename) = if stdin {
@@ -30,38 +29,7 @@ pub fn run(
         _ => AnalysisMode::Teaching,
     };
     
-    let analyzer_backend = match backend.as_deref() {
-        Some("mir") => AnalyzerBackend::Mir,
-        Some("simple") => AnalyzerBackend::Simple,
-        None => AnalyzerBackend::default(),
-        Some(other) => {
-            anyhow::bail!("Unknown backend: {}. Valid options: simple, mir", other);
-        }
-    };
-    
-    // Create analyzer with status information
-    let (mut analyzer, status) = create_analyzer_with_status(analyzer_backend, analysis_mode);
-    
-    // Show backend status (only for non-JSON output)
-    let output_format = output.as_deref().unwrap_or("timeline");
-    if output_format != "json" {
-        match analyzer_backend {
-            AnalyzerBackend::Simple => {
-                eprintln!("✓ Using Simple backend (syntax-based analysis)");
-            }
-            AnalyzerBackend::Mir => {
-                if status.mir_available {
-                    eprintln!("✓ Using MIR backend (compiler-backed analysis)");
-                } else {
-                    eprintln!("⚠ MIR backend unavailable, using Simple backend");
-                    if let Some(err) = &status.mir_error {
-                        eprintln!("  Reason: {}", err);
-                    }
-                }
-            }
-        }
-        eprintln!();
-    }
+    let mut analyzer = create_analyzer(analysis_mode);
     
     let analysis = analyzer.analyze(&source, &filename)?;
     

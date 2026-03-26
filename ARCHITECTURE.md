@@ -48,6 +48,7 @@ All Rust semantics are handled by the analysis engine, which produces a structur
 **Purpose**: Bridges between Rust source code and the core engine.
 
 **Current Implementation**: `SimpleAnalyzer`
+
 - Syntax-based parsing for MVP
 - Handles basic ownership patterns:
   - `let` bindings
@@ -55,9 +56,10 @@ All Rust semantics are handled by the analysis engine, which produces a structur
   - Borrows (`&` and `&mut`)
   - Scope-based drops
 
-**Future Implementation**: MIR-based analyzer
-- Use `rustc_driver` for compiler integration
-- Extract facts from MIR (Mid-level IR)
+**Future Enhancements**
+
+- Enhanced pattern matching analysis
+- Improved error detection
 - Handle all Rust constructs accurately
 - Support NLL, partial moves, closures, async
 
@@ -66,6 +68,7 @@ All Rust semantics are handled by the analysis engine, which produces a structur
 **Purpose**: Command-line interface for analysis.
 
 **Commands**:
+
 ```bash
 cargo ownership-viz --file <path>
 cargo ownership-viz --stdin
@@ -74,6 +77,7 @@ cargo ownership-viz --mode teaching|debug
 ```
 
 **Output Formats**:
+
 - `timeline`: Colored, step-by-step event list
 - `json`: Structured `ProgramAnalysis` for tooling
 - `text`: Summary of variables and graph
@@ -83,18 +87,21 @@ cargo ownership-viz --mode teaching|debug
 **Purpose**: Interactive visualization and debugging.
 
 **Backend** (`src-tauri/`):
+
 - Tauri commands expose analysis functions
 - `analyze_snippet`: Analyze code from editor
 - `analyze_file`: Analyze file from disk
 - `query_*`: Answer debugging questions
 
 **Frontend** (`src/`):
+
 - React + TypeScript
 - TailwindCSS for styling
 - Monaco Editor for code editing
 - React Flow for graph visualization
 
 **Components**:
+
 - `SourceView`: Code editor with line highlighting
 - `TimelineView`: Step-by-step event list
 - `GraphView`: Visual ownership graph
@@ -141,7 +148,7 @@ cargo ownership-viz --mode teaching|debug
 
 ### 1. Separation of Analysis and Presentation
 
-**Why**: Allows multiple UIs (CLI, desktop, web, IDE plugin) to share the same analysis engine.
+**Why**: Allows multiple UIs (CLI, desktop, web, IDE extension) to share the same analysis engine.
 
 **How**: Core produces JSON, UIs consume it.
 
@@ -150,6 +157,7 @@ cargo ownership-viz --mode teaching|debug
 **Why**: Ownership changes are temporal - they happen at specific lines.
 
 **How**: Each event has:
+
 - Kind (create, move, borrow, drop)
 - Variable ID
 - Line number
@@ -192,19 +200,20 @@ cargo ownership-viz --mode teaching|debug
 ### Improving Analysis
 
 **Short term**: Enhance `SimpleAnalyzer`
+
 - Better pattern matching
 - Handle more syntax forms
 - Improve borrow tracking
 
-**Long term**: Implement MIR-based analyzer
-- Create `MirAnalyzer` in new crate
-- Use `rustc_driver` for compilation
-- Extract ownership facts from MIR
-- Implement in `ownsight-driver`
+**Long term**: Advanced analysis features
+
+- Enhanced pattern matching
+- Cross-file analysis
 
 ### Adding UI Features
 
 All UI code is in `ui/src/`:
+
 - New components in `components/`
 - New types in `types/`
 - Styling with TailwindCSS classes
@@ -212,11 +221,13 @@ All UI code is in `ui/src/`:
 ## Performance Considerations
 
 ### Current (MVP)
+
 - Single-threaded analysis
 - No caching
 - Full re-analysis on each change
 
 ### Future Optimizations
+
 - Incremental analysis (only re-analyze changed functions)
 - Parallel analysis of independent functions
 - Result caching with content hashing
@@ -225,36 +236,25 @@ All UI code is in `ui/src/`:
 ## Testing Strategy
 
 ### Unit Tests
+
 - Core model operations
 - Event generation
 - Graph building
 - Query methods
 
 ### Integration Tests
+
 - End-to-end analysis of snippets
 - CLI output validation
 - Tauri command testing
 
 ### Snapshot Tests
+
 - Store expected analysis for test cases
 - Use `insta` crate for snapshot testing
 - Test cases in `tests/snapshots/`
 
 ## Future Architecture
-
-### MIR-Based Analysis
-
-```
-Rust Source
-    ↓
-rustc (parse + typecheck)
-    ↓
-MIR (Mid-level IR)
-    ↓
-MIR Visitor (extract ownership facts)
-    ↓
-ProgramAnalysis
-```
 
 ### Multi-Crate Support
 
@@ -292,15 +292,18 @@ Inline decorations + hover info
 ## Deployment
 
 ### CLI
+
 - Publish to crates.io
 - Install with `cargo install ownsight-cli`
 
 ### Desktop App
+
 - Build with `bun run tauri build`
 - Distribute platform-specific bundles
 - Auto-update with Tauri updater
 
 ### Web Version (Future)
+
 - Compile analysis engine to WASM
 - Run in browser
 - No server needed for basic analysis
@@ -314,7 +317,5 @@ Inline decorations + hover info
 
 ## References
 
-- [Rust MIR](https://rustc-dev-guide.rust-lang.org/mir/index.html)
-- [Polonius](https://github.com/rust-lang/polonius) - Next-gen borrow checker
 - [Tauri Architecture](https://tauri.app/v1/references/architecture/)
 - [React Flow](https://reactflow.dev/learn)

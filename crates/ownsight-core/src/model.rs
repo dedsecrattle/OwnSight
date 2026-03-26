@@ -333,14 +333,14 @@ pub struct BorrowInfo {
 }
 
 // ============================================================================
-// Layer 2 Data Structures
+// Future Data Structures
 // ============================================================================
 
-/// MIR location (basic block + statement index)
+/// Location for advanced analysis features
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct MirLocation {
-    pub basic_block: usize,
-    pub statement_index: usize,
+pub struct AdvancedLocation {
+    pub index: usize,
+    pub sub_index: usize,
 }
 
 /// Lifetime identifier

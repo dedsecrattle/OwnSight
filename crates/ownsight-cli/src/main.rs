@@ -28,8 +28,6 @@ enum Commands {
         #[arg(short, long, help = "Teaching mode (simplified) or debug mode (precise)")]
         mode: Option<String>,
         
-        #[arg(short = 'b', long, help = "Analysis backend: simple (syntax-based) or mir (compiler-based)")]
-        backend: Option<String>,
         
         #[arg(long, help = "Specific function to analyze")]
         function: Option<String>,
@@ -40,8 +38,8 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
     
     match cli.command {
-        Commands::OwnershipViz { file, stdin, output, mode, backend, function } => {
-            commands::analyze::run(file, stdin, output, mode, backend, function)?;
+        Commands::OwnershipViz { file, stdin, output, mode, function } => {
+            commands::analyze::run(file, stdin, output, mode, function)?;
         }
     }
     

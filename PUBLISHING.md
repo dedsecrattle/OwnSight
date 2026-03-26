@@ -16,6 +16,7 @@ This guide covers how to publish both the CLI tool and desktop application.
 ### Prepare for Publishing
 
 1. **Update package metadata** in `crates/ownsight-cli/Cargo.toml`:
+
    ```toml
    [package]
    name = "ownsight-cli"
@@ -33,6 +34,7 @@ This guide covers how to publish both the CLI tool and desktop application.
    ```
 
 2. **Add LICENSE files** (already have MIT OR Apache-2.0):
+
    ```bash
    # These should be in the root directory
    touch LICENSE-MIT LICENSE-APACHE
@@ -66,11 +68,13 @@ cargo publish
 ### Installation After Publishing
 
 Users can install with:
+
 ```bash
 cargo install ownsight-cli
 ```
 
 Then use:
+
 ```bash
 cargo ownership-viz --file example.rs
 ```
@@ -91,7 +95,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   release:
@@ -117,7 +121,7 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: './ui/src-tauri -> target'
+          workspaces: "./ui/src-tauri -> target"
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v1
@@ -132,8 +136,8 @@ jobs:
         with:
           projectPath: ui
           tagName: ${{ github.ref_name }}
-          releaseName: 'Ownsight v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
+          releaseName: "Ownsight v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
 
@@ -150,6 +154,7 @@ jobs:
 #### Create a Release
 
 1. **Tag a version**:
+
    ```bash
    git tag -a v0.1.0 -m "Release v0.1.0"
    git push origin v0.1.0
@@ -176,10 +181,12 @@ bun run tauri build
 ```
 
 **Distribute**:
+
 - Upload `.dmg` to your website or GitHub releases
 - Users drag to Applications folder
 
 **Code Signing** (for distribution outside App Store):
+
 ```bash
 # Get a Developer ID certificate from Apple
 # Then sign:
@@ -204,11 +211,13 @@ bun run tauri build
 ```
 
 **Distribute**:
+
 - `.AppImage`: Direct download, no installation needed
 - `.deb`: For Debian/Ubuntu users
 - `.rpm`: For Fedora/RHEL users
 
 **Publish to package managers**:
+
 - **Flathub**: Create a Flatpak manifest
 - **Snap Store**: Create a snapcraft.yaml
 - **AUR** (Arch): Create a PKGBUILD
@@ -225,10 +234,12 @@ bun run tauri build
 ```
 
 **Distribute**:
+
 - `.msi`: Windows Installer
 - `.exe`: NSIS installer (recommended)
 
 **Code Signing** (optional but recommended):
+
 ```bash
 # Get a code signing certificate
 # Use signtool.exe to sign the installer
@@ -239,6 +250,7 @@ bun run tauri build
 For a web version using WASM:
 
 1. **Compile analysis engine to WASM**:
+
    ```bash
    cd crates/ownsight-core
    wasm-pack build --target web
@@ -317,21 +329,26 @@ For a web version using WASM:
 ### 3. Community Announcements
 
 **Reddit**:
+
 - r/rust
 - r/learnrust
 - r/programming
 
 **Hacker News**:
+
 - Show HN: Ownsight - Interactive Rust Ownership Visualizer
 
 **Twitter/X**:
+
 - Tag @rustlang
 - Use hashtags: #rustlang #rust
 
 **This Week in Rust**:
+
 - Submit to newsletter
 
 **Rust Blog**:
+
 - Write a blog post about the project
 
 ### 4. Documentation Sites
@@ -347,7 +364,7 @@ For a web version using WASM:
 ### Versioning (Semantic Versioning)
 
 - **0.1.0**: Initial release (MVP)
-- **0.2.0**: Add MIR-based analysis
+- **0.2.0**: Enhanced analysis features
 - **0.3.0**: Add VS Code extension
 - **1.0.0**: Production-ready, stable API
 
@@ -381,6 +398,7 @@ Tauri supports auto-updates. Configure in `tauri.conf.json`:
 ## Quick Start Commands
 
 ### Publish CLI
+
 ```bash
 # One-time setup
 cargo login
@@ -392,6 +410,7 @@ cd ../ownsight-cli && cargo publish
 ```
 
 ### Build Desktop App
+
 ```bash
 # macOS
 cd ui && bun run tauri build
@@ -401,6 +420,7 @@ cd ui && bun run tauri build
 ```
 
 ### Create GitHub Release
+
 ```bash
 # Tag and push
 git tag -a v0.1.0 -m "Release v0.1.0"
@@ -414,16 +434,19 @@ git push origin v0.1.0
 ## Support & Maintenance
 
 ### Issue Tracking
+
 - Use GitHub Issues
 - Label: bug, enhancement, question, documentation
 - Create issue templates
 
 ### Community
+
 - GitHub Discussions for Q&A
 - Discord server (optional)
 - Twitter for updates
 
 ### Analytics (Optional)
+
 - Track downloads from GitHub releases
 - Monitor crates.io download stats
 - Google Analytics for documentation site

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Initial implementation of Ownsight
 - Core analysis engine with ownership event tracking
 - Simple syntax-based Rust parser
@@ -23,12 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 
 #### CLI (`ownsight-cli`)
+
 - Analyze Rust code from files or stdin
 - Output formats: JSON, timeline, text
 - Teaching vs debug mode explanations
 - Colored terminal output
 
 #### Desktop App
+
 - Interactive code editor
 - Timeline view with event icons and explanations
 - Graph view showing ownership relationships
@@ -37,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Real-time analysis
 
 #### Core Engine (`ownsight-core`)
+
 - Variable tracking (name, type, scope, mutability)
 - Event extraction (Create, Move, Borrow, Drop, etc.)
 - Ownership graph generation
@@ -50,25 +54,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 First public release of Ownsight - Rust Ownership Visualizer.
 
 **Layer 1 Features** (Learning & Exam Tool):
+
 - ✨ Interactive timeline visualization
 - 📊 Source code highlighting
 - 🎯 Teaching mode with simplified explanations
 - 🔄 Step-by-step playback controls
 
 **What's Included**:
+
 - CLI tool for terminal-based analysis
 - Desktop application for interactive visualization
 - Support for basic ownership patterns
 - Example snippets and documentation
 
 **Known Limitations**:
-- Uses simple syntax-based parser (not MIR-based)
+
+- Uses simple syntax-based parser
 - Limited to single functions
 - Does not support: closures, async/await, complex pattern matching
 - No cargo workspace integration yet
 
 **Coming in Layer 2**:
-- MIR-based analysis using rustc internals
+
+- Enhanced analysis capabilities
 - Full cargo workspace support
 - Advanced features (closures, async, NLL)
 - VS Code extension
@@ -88,30 +96,35 @@ First public release of Ownsight - Rust Ownership Visualizer.
 
 ### Roadmap
 
-**v0.2.0** - MIR Integration
-- Replace simple parser with MIR-based analysis
+**v0.2.0** - Enhanced Features
+
+- Enhance simple parser with improved analysis
 - Accurate borrow checking
 - Support for more Rust constructs
 
 **v0.3.0** - Advanced Features
+
 - Partial moves (struct fields)
 - Pattern matching flows
 - Non-lexical lifetimes (NLL)
 - Closure capture analysis
 
 **v0.4.0** - Workspace Support
+
 - Multi-crate analysis
 - Cargo integration
 - Function summaries
 - Cross-crate ownership tracking
 
 **v0.5.0** - Editor Integration
+
 - VS Code extension
 - Rust Analyzer integration
 - Inline ownership hints
 - Real-time analysis
 
 **v1.0.0** - Production Ready
+
 - Stable API
 - Comprehensive documentation
 - Full test coverage
@@ -127,6 +140,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to Ow
 ## License
 
 Licensed under either of:
+
 - Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
 - MIT license ([LICENSE-MIT](LICENSE-MIT))
 

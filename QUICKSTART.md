@@ -3,6 +3,7 @@
 ## What You Just Built
 
 A complete Rust ownership visualizer with:
+
 - **CLI tool** for analyzing Rust code from terminal
 - **Desktop app** with interactive timeline, graph view, and stepping
 - **Two-layer architecture** ready to grow from exam tool to debugging platform
@@ -38,6 +39,7 @@ bun run tauri dev
 ```
 
 This will:
+
 - Start the Vite dev server on port 1420
 - Launch the Tauri desktop application
 - Open the Ownsight visualizer
@@ -45,6 +47,7 @@ This will:
 ### 3. Try These Examples in the App
 
 **Example 1: Simple Move**
+
 ```rust
 fn main() {
     let s = String::from("hello");
@@ -58,6 +61,7 @@ fn takes_ownership(some_string: String) {
 ```
 
 **Example 2: Borrowing**
+
 ```rust
 fn main() {
     let s = String::from("hello");
@@ -68,6 +72,7 @@ fn main() {
 ```
 
 **Example 3: Mutable Borrow**
+
 ```rust
 fn main() {
     let mut s = String::from("hello");
@@ -80,18 +85,21 @@ fn main() {
 ## Features to Explore
 
 ### Timeline View
+
 - Click "Analyze" to process your code
 - Use the step controller to navigate through ownership events
 - See line-by-line highlighting in the source view
 - Watch variables get created, moved, borrowed, and dropped
 
 ### Graph View
+
 - Switch to "Graph View" tab
 - See visual relationships between variables
 - Nodes show variable state (created, moved, borrowed)
 - Edges show ownership relationships
 
 ### Query Interface
+
 - Select a variable from the dropdown
 - Ask questions like:
   - "Why can't I use this?"
@@ -100,6 +108,7 @@ fn main() {
 - Get instant answers based on the analysis
 
 ### Interactive Stepping
+
 - Play/Pause button for automatic stepping
 - Previous/Next buttons for manual control
 - Speed control (0.5x to 4x)
@@ -108,18 +117,21 @@ fn main() {
 ## What's Working
 
 ✅ **Core Analysis Engine**
+
 - Variable tracking (name, type, scope, mutability)
 - Event extraction (create, move, borrow, drop)
 - Ownership state at each line
 - Graph generation
 
 ✅ **CLI Tool**
+
 - Snippet mode (stdin)
 - File mode
 - JSON/timeline/text output
 - Teaching vs debug modes
 
 ✅ **Desktop UI**
+
 - Monaco code editor with syntax highlighting
 - Timeline view with event icons and explanations
 - Graph visualization with React Flow
@@ -129,13 +141,15 @@ fn main() {
 ## Next Steps to Enhance
 
 ### Short Term (Layer 1 Polish)
+
 1. Add more test cases in `tests/snapshots/`
 2. Improve error messages and explanations
 3. Add syntax error handling
 4. Create example gallery in the UI
 
 ### Medium Term (Layer 2 Features)
-1. Replace simple parser with MIR-based analysis
+
+1. Enhance simple parser with improved analysis
 2. Add Cargo workspace support
 3. Implement function summaries
 4. Handle partial moves (struct fields)
@@ -143,6 +157,7 @@ fn main() {
 6. Implement NLL (non-lexical lifetimes)
 
 ### Long Term
+
 1. VS Code extension
 2. Rust Analyzer integration
 3. CI/CD integration
@@ -195,12 +210,14 @@ bun run tauri build
 ## Troubleshooting
 
 **CLI not working?**
+
 ```bash
 cargo clean
 cargo build --workspace
 ```
 
 **UI not starting?**
+
 ```bash
 cd ui
 rm -rf node_modules
@@ -209,6 +226,7 @@ bun run tauri dev
 ```
 
 **TypeScript errors?**
+
 - These are expected before `bun install`
 - Run `bun install` in the `ui/` directory
 
@@ -217,7 +235,7 @@ bun run tauri dev
 The codebase is structured for easy extension:
 
 1. **Add new event types**: Edit `EventKind` in `model.rs`
-2. **Improve analysis**: Enhance `simple_analyzer.rs` or add MIR-based analyzer
+2. **Improve analysis**: Enhance `simple_analyzer.rs` with better pattern detection
 3. **Add UI features**: Create components in `ui/src/components/`
 4. **Add queries**: Extend `analysis.rs` with new query methods
 
