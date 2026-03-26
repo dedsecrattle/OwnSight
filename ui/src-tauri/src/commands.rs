@@ -111,10 +111,3 @@ pub fn query_what_borrows(
     
     Ok(analyzer.query_what_borrows(VariableId(var_id), line))
 }
-
-#[tauri::command]
-pub fn check_backend_availability() -> BackendAvailability {
-    BackendAvailability {
-        simple: true,
-    }
-}

@@ -352,15 +352,8 @@ pub struct LifetimeId(pub usize);
 pub struct Lifetime {
     pub id: LifetimeId,
     pub name: Option<String>,
-    pub region: Region,
 }
 
-/// Region bounds (start and end locations)
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Region {
-    pub start: MirLocation,
-    pub end: MirLocation,
-}
 
 /// Closure capture mode
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
